@@ -13,7 +13,7 @@ class CustomUser(AbstractUser):
 
     # Your migration has email unique=True
     email = models.EmailField(unique=True)
-
+    
     # Login security controls (matches your migration)
     failed_login_attempts = models.IntegerField(default=0)
     is_locked = models.BooleanField(default=False)

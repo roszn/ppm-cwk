@@ -7,10 +7,10 @@ django.setup()
 from accounts.models import CustomUser
 
 # Delete existing admin if exists
+# Create superuser
 CustomUser.objects.filter(username='admin').delete()
 CustomUser.objects.filter(email='admin@fdm.com').delete()
 
-# Create superuser
 admin = CustomUser.objects.create_superuser(
     username='admin',
     email='admin@fdm.com',
@@ -19,10 +19,8 @@ admin = CustomUser.objects.create_superuser(
     last_name='User'
 )
 
-print("=" * 50)
 print("ADMIN USER CREATED SUCCESSFULLY")
-print("=" * 50)
-print(f"Email: admin@fdm.com")
+print("\nEmail: admin@fdm.com")
 print(f"Password: Admin123!")
 print(f"Is superuser: {admin.is_superuser}")
 print(f"Is staff: {admin.is_staff}")

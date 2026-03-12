@@ -1,0 +1,129 @@
+/*html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #2d5a27;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.btn {
+    border-radius: 5px;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.container {
+    flex: 1;
+    background-color: #fff;
+}
+
+footer {
+    margin-top: auto;
+    background-color: #c8fd14;
+    color: #1e1e1e;
+    text-align: center;
+    padding: 12px;
+    font-size: 20px;
+}*/
+
+/* green- #c8fd14
+background - #1e1e1e
+  foreground - #f7f6f5 */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1e1e1e; /* This sets your green background */
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh; /* Ensures the green covers the whole screen */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Adjusting the container so it doesn't conflict with Bootstrap */
+.container-fluid {
+    flex: 1; /* Pushes the footer to the bottom */
+    padding: 20px;
+}
+
+header {
+    background: grey;
+    color: white;
+    padding-top: 30px;
+    min-height: 70px;
+    border-bottom: black 5px solid;
+}
+
+/* ... keep the rest of your CSS as it was ... */
+
+footer {
+    margin-top: auto;
+    color: white;
+    padding: 12px;
+    background-color: rgba(0,0,0,0.3); /* Subtle dark overlay for the footer */
+    text-align: center;
+    font-size: 16px;
+    width: 100%;
+}
+
+footer {
+    margin-top: auto;
+    background-color: #c8fd14;
+    color: #1e1e1e;
+    text-align: center;
+    padding: 12px;
+    font-size: 20px;
+}
+
+.btn {
+    border-radius: 5px;
+}
+/* Targets the Login card header AND the Register card header */
+.card-header.bg-primary, 
+.card-header.bg-success {
+    background-color: #c8fd14 !important;
+    color: #1e1e1e !important; 
+}
+
+/* Targets the Login button AND the Register button */
+.btn-primary, 
+.btn-success {
+    background-color: #c8fd14 !important;
+    border-color: #c8fd14 !important;
+    color: #1e1e1e !important;
+    font-weight: bold;
+}
+
+/* Hover effects for both */
+.btn-primary:hover, 
+.btn-success:hover {
+    background-color: #b2e212 !important;
+    border-color: #b2e212 !important;
+    color: #000 !important;
+}
+
+/* Optional: Make the "Login/Register" links at the bottom match too */
+.card-body a {
+    color: #1481fd;
+    text-decoration: none;
+}
+
+.card-body a:hover {
+    text-decoration: underline;
+}

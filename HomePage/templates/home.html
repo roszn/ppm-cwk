@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FDM Portal - Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="brand">FDM Portal</div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/profile">My Profile</a>
+            <a href="/holiday">Book Leave</a>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1>FDM Employee Portal - Home</h1>
+
+        <div class="content-list">
+            {% for item in content %}
+            <div class="item-block">
+                <span class="category">{{ item.type }}</span>
+                <h2>{{ item.title }}</h2>
+                
+                <div class="button-group">
+                    <button onclick="react({{ item.id }}, 'like')">
+                        Like (<span id="like-{{ item.id }}">{{ item.likes }}</span>)
+                    </button>
+                    <button onclick="react({{ item.id }}, 'dislike')">
+                        Dislike (<span id="dislike-{{ item.id }}">{{ item.dislikes or 0 }}</span>)
+                    </button>
+
+                    {% if item.type == 'File' %}
+                        <a href="#" class="download-link">Download</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    
+    <script>
+        function react(id, type) {
+            fetch('/' + type + '/' + id, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                const span = document.getElementById(type + '-' + id);
+                if (span) span.innerText = data.new_count;
+            })
+            .catch(err => console.error('Error:', err));
+        }
+    </script>
+</body>
+</html>

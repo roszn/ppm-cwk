@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "title": "Welcome to FDM - Global Strategy 2026",
+        "type": "News",
+        "likes": 15,
+        "dislikes": 2
+    },
+    {
+        "id": 2,
+        "title": "Employee_Handbook_v3.pdf",
+        "type": "File",
+        "likes": 8,
+        "dislikes": 0
+    }
+]

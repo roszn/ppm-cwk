@@ -1,0 +1,936 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FDM Employee Portal - Home</title>
+
+    <!-- using bootstrap to help with the layout and 2 column grid -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- font awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* colour palette:
+           lime green #c8fd14  - FDM brand, nav/buttons only
+           soft white #e2e8f0  - news stripe
+           amber yellow #fcd34d - file stripe
+           slate grey #94a3b8  - policy stripe
+           olive green #86b050 - update stripe
+        */
+
+        body {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* ---- NAVBAR ---- */
+        .navbar {
+            background-color: #111111;
+            border-bottom: 1px solid #2e2e2e;
+        }
+
+        .navbar-brand {
+            color: #c8fd14 !important;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+
+        .nav-link { color: #9ca3af !important; }
+        .nav-link:hover { color: #f0f0f0 !important; }
+        .nav-link.active { color: #c8fd14 !important; }
+
+        /* ---- WELCOME SECTION ---- */
+        .welcome-section {
+            padding: 2rem 0 1.25rem 0;
+        }
+
+        .welcome-section h1 {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .green-text { color: #c8fd14; }
+
+        /* green gradient divider under the welcome heading */
+        .welcome-divider {
+            height: 2px;
+            background: linear-gradient(to right, #c8fd14, transparent);
+            border: none;
+            margin: 1rem 0 1.5rem 0;
+            opacity: 0.4;
+        }
+
+        /* ---- ADMIN BAR ---- */
+        /* to be connected to Django backend by backend team */
+        /* backend team needs to check user.is_staff before showing this */
+        .admin-bar {
+            background-color: rgba(197, 255, 0, 0.05);
+            border: 1px solid rgba(197, 255, 0, 0.15);
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .upload-btn {
+            background-color: #c8fd14;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 14px;
+            color: #1e1e1e;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .upload-btn:hover { opacity: 0.85; }
+
+        /* ---- PINNED CARD ---- */
+        /* green left stripe and subtle glow to make it stand out */
+        .pinned-card {
+            background-color: #242424;
+            border: 1px solid #2e2e2e;
+            border-left: 4px solid #c8fd14;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: -4px 0 18px rgba(197, 255, 20, 0.08);
+        }
+
+        .pinned-label {
+            color: #c8fd14;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ---- FILTER BUTTONS ---- */
+        /* plain text, no dots - changes to stripe colour when clicked */
+        .filter-btn {
+            background-color: #2a2a2a;
+            color: #9ca3af;
+            border: 1px solid #3a3a3a;
+            border-radius: 20px;
+            padding: 5px 15px;
+            margin-right: 5px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.15s;
+        }
+
+        .filter-btn:hover {
+            color: #f0f0f0;
+            border-color: #555;
+        }
+
+        /* all stays lime green */
+        .filter-btn.active-all {
+            background-color: #c8fd14;
+            color: #1e1e1e;
+            border-color: #c8fd14;
+            font-weight: bold;
+        }
+
+        /* news stays lime green when active */
+        .filter-btn.active-news {
+            background-color: #c8fd14;
+            color: #1e1e1e;
+            border-color: #c8fd14;
+            font-weight: bold;
+        }
+
+        /* file stays lime green when active */
+        .filter-btn.active-file {
+            background-color: #c8fd14;
+            color: #1e1e1e;
+            border-color: #c8fd14;
+            font-weight: bold;
+        }
+
+        /* policy stays lime green when active */
+        .filter-btn.active-policy {
+            background-color: #c8fd14;
+            color: #1e1e1e;
+            border-color: #c8fd14;
+            font-weight: bold;
+        }
+
+        /* update stays lime green when active */
+        .filter-btn.active-update {
+            background-color: #c8fd14;
+            color: #1e1e1e;
+            border-color: #c8fd14;
+            font-weight: bold;
+        }
+
+        /* search box glows green on focus */
+        .search-wrapper {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            padding: 5px 10px;
+            transition: border-color 0.2s;
+        }
+
+        .search-wrapper:focus-within { border-color: #c8fd14; }
+
+        .search-input {
+            background: transparent;
+            border: none;
+            color: #f0f0f0;
+            font-size: 0.875rem;
+            width: 180px;
+            outline: none;
+        }
+
+        .search-input::placeholder { color: #555; }
+
+        /* ---- CONTENT CARDS ---- */
+        .content-card {
+            background-color: #242424;
+            border: 1px solid #2e2e2e;
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.2s;
+            height: 100%;
+        }
+
+        .content-card:hover { border-color: #444444; }
+
+        /* removed colour stripes - plain border is cleaner */
+        /* type is shown by the plain text label instead */
+
+        /* plain type label - stripe handles the colour now */
+        .type-label {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #9ca3af;
+        }
+
+        /* ---- REACTION BUTTONS ---- */
+        /* just floating icons with counts, no background rectangle */
+        /* inspired by instagram/facebook style */
+        .reaction-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .react-btn {
+            background: none;
+            border: none;
+            color: #555555;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0;
+            transition: color 0.15s;
+        }
+
+        .react-btn:hover { color: #9ca3af; }
+
+        /* heart fills red when liked */
+        .react-btn.liked { color: #ef4444; }
+
+        /* circle x fills red when disliked */
+        .react-btn.disliked { color: #ef4444; }
+
+        /* heart outline by default, filled heart when liked */
+        .heart-icon::before {
+            content: "\f08a";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 400;
+        }
+
+        .liked .heart-icon::before {
+            content: "\f004";
+            font-weight: 900;
+        }
+
+        .react-count {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* ---- DOWNLOAD BUTTON ---- */
+        .download-btn {
+            background-color: rgba(197, 255, 0, 0.08);
+            border: 1px solid rgba(197, 255, 0, 0.25);
+            color: #c8fd14;
+            border-radius: 6px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.15s;
+        }
+
+        .download-btn:hover {
+            background-color: rgba(197, 255, 0, 0.15);
+            color: #c8fd14;
+        }
+
+        /* ---- ADMIN REMOVE BUTTON ---- */
+        /* admin only - to be connected to backend team */
+        /* backend team should only render this when user.is_staff is true */
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #3a3a3a;
+            font-size: 0.8rem;
+            cursor: pointer;
+            padding: 2px 4px;
+            transition: color 0.15s;
+        }
+
+        .remove-btn:hover { color: #ef4444; }
+
+        /* ---- CARD FOOTER ---- */
+        .card-footer-row {
+            border-top: 1px solid #2e2e2e;
+            padding-top: 0.75rem;
+            margin-top: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ---- NO RESULTS ---- */
+        .no-results {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            color: #444;
+        }
+
+        .no-results i {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        /* ---- SOCIAL FOOTER ---- */
+        .social-footer {
+            border-top: 1px solid #2e2e2e;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .social-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1px solid #2e2e2e;
+            background-color: #242424;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            text-decoration: none;
+            margin-left: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .social-icon:hover {
+            border-color: #c8fd14;
+            color: #c8fd14;
+        }
+
+        .date-text { font-size: 0.75rem; color: #666666; }
+
+        /* ---- UPLOAD MODAL ---- */
+        .upload-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-box {
+            background-color: #242424;
+            border: 1px solid #2e2e2e;
+            border-radius: 14px;
+            padding: 2rem;
+            width: 460px;
+            max-width: 90vw;
+        }
+
+        .modal-input {
+            background-color: #1e1e1e;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #f0f0f0;
+            width: 100%;
+            font-size: 0.875rem;
+            margin-bottom: 10px;
+            font-family: Arial, sans-serif;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #c8fd14;
+        }
+    </style>
+</head>
+<body>
+
+<!-- navbar linking to all portal pages -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="#">FDM Portal</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+            style="border-color:#3a3a3a;">
+            <span class="navbar-toggler-icon" style="filter:invert(1);"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/profile">My Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="/holiday">Book Leave</a></li>
+                <li class="nav-item"><a class="nav-link" href="/calendar">Calendar</a></li>
+                <li class="nav-item"><a class="nav-link" href="/support">Support</a></li>
+            </ul>
+            <!-- user info on the right of the nav -->
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:32px; height:32px; background:#c8fd14; border-radius:50%;
+                    display:flex; align-items:center; justify-content:center;
+                    color:#1e1e1e; font-weight:bold; font-size:0.8rem;">U</div>
+                <span style="font-size:0.875rem; color:#9ca3af;">Welcome, User</span>
+                <a href="/logout" style="font-size:0.8rem; color:#555; text-decoration:none; margin-left:8px;">
+                    Log out
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- welcome heading -->
+    <div class="welcome-section">
+        <h1>Good morning, <span class="green-text">FDM Team.</span></h1>
+        <p style="color:#9ca3af; margin-top:0.4rem;">
+            Latest news, files and announcements from across the organisation.
+        </p>
+        <!-- subtle green gradient divider -->
+        <hr class="welcome-divider">
+    </div>
+
+    <!-- admin bar - to be connected to Django backend by backend team -->
+    <!-- backend team: only show this when user.is_staff is true -->
+    <div class="admin-bar" id="adminBar">
+        <i class="fas fa-shield-alt" style="color:#c8fd14; margin-right:8px;"></i>
+        <span style="color:#9ca3af;">
+            <strong style="color:#f0f0f0;">Admin view</strong> — you can upload and remove portal content
+        </span>
+        <button class="upload-btn" onclick="showUploadModal()">
+            <i class="fas fa-plus"></i> Upload Content
+        </button>
+    </div>
+
+    <!-- pinned announcement - lime green stripe and glow -->
+    <div class="pinned-card">
+        <div class="pinned-label">
+            <i class="fas fa-thumbtack" style="margin-right:5px;"></i>Pinned Announcement
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
+            <div>
+                <h4 style="font-weight:bold; margin-bottom:0.4rem;">Q2 2026 Company Update — All Staff</h4>
+                <p style="color:#9ca3af; font-size:0.875rem; max-width:600px; line-height:1.6;">
+                    A message from leadership on our performance this quarter, upcoming initiatives,
+                    and what to expect as we move into Q3. Please read before the town hall on 28th March.
+                </p>
+                <div style="margin-top:0.75rem; display:flex; align-items:center; gap:10px;">
+                    <span class="type-label">Update</span>
+                    <span class="date-text">Posted 18 March 2026 by HR Team</span>
+                </div>
+            </div>
+            <!-- heart and circle-x reactions - just floating icons, no background -->
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
+                <button class="react-btn" onclick="react(this, 'like', 'pinned')">
+                    <i class="heart-icon"></i>
+                    <span class="react-count">24</span>
+                </button>
+                <button class="react-btn" onclick="react(this, 'dislike', 'pinned')">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                    <span class="react-count">2</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- filter buttons - plain text, no dots -->
+    <!-- each button changes to its stripe colour when clicked -->
+    <div style="display:flex; align-items:center; flex-wrap:wrap; margin-bottom:1rem; gap:5px;">
+        <button class="filter-btn active-all" onclick="filterCards(this, 'all')">All</button>
+        <button class="filter-btn" onclick="filterCards(this, 'news')">News</button>
+        <button class="filter-btn" onclick="filterCards(this, 'file')">Files</button>
+        <button class="filter-btn" onclick="filterCards(this, 'policy')">Policies</button>
+        <button class="filter-btn" onclick="filterCards(this, 'update')">Updates</button>
+        <!-- search box glows green on focus -->
+        <div class="search-wrapper">
+            <i class="fas fa-search" style="color:#555; font-size:0.8rem;"></i>
+            <input class="search-input" type="text" placeholder="Search content..."
+                oninput="searchCards(this.value)">
+        </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+        <span style="font-size:0.75rem; color:#555; text-transform:uppercase; letter-spacing:1px; font-weight:bold;">
+            Latest Content
+        </span>
+        <span style="font-size:0.75rem; color:#555;" id="visibleCount">6 items</span>
+    </div>
+
+    <!-- shown when search finds nothing -->
+    <div class="no-results" id="noResults">
+        <i class="fas fa-search"></i>
+        <p>No content found.</p>
+    </div>
+
+    <!-- 2 column grid on wide screens, 1 column on mobile -->
+    <div class="row" id="cardsGrid">
+
+        <!-- news - soft white left stripe -->
+        <div class="col-12 col-md-6 card-wrapper" data-type="news">
+            <div class="content-card card-news">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                    <span class="type-label">News</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="date-text">15 Mar 2026</span>
+                        <!-- admin only remove button - backend team: only render when user.is_staff is true -->
+                        <button class="remove-btn" onclick="removeCard(this)" title="Remove post">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <h5 style="font-weight:bold; margin-bottom:0.4rem;">
+                    Spring 2026 Graduate Intake — Meet Your New Colleagues
+                </h5>
+                <p style="color:#9ca3af; font-size:0.85rem; line-height:1.6;">
+                    We're welcoming 42 new graduates across our UK academies this month.
+                    Find out who's joining your team and how to connect with them through the portal.
+                </p>
+                <div class="card-footer-row">
+                    <div class="reaction-group">
+                        <button class="react-btn" onclick="react(this, 'like', 'c1')">
+                            <i class="heart-icon"></i>
+                            <span class="react-count">18</span>
+                        </button>
+                        <button class="react-btn" onclick="react(this, 'dislike', 'c1')">
+                            <i class="fa-regular fa-circle-xmark"></i>
+                            <span class="react-count">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- file - amber yellow left stripe -->
+        <div class="col-12 col-md-6 card-wrapper" data-type="file">
+            <div class="content-card card-file">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                    <span class="type-label">File</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="date-text">10 Mar 2026</span>
+                        <!-- admin only - backend team: only render when user.is_staff is true -->
+                        <button class="remove-btn" onclick="removeCard(this)" title="Remove post">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <h5 style="font-weight:bold; margin-bottom:0.4rem;">
+                    Employee Handbook 2026 — Updated Edition
+                </h5>
+                <p style="color:#9ca3af; font-size:0.85rem; line-height:1.6;">
+                    The latest version of the FDM Employee Handbook including updated policies
+                    on hybrid working, leave entitlements, and the code of conduct.
+                </p>
+                <div class="card-footer-row">
+                    <div class="reaction-group">
+                        <button class="react-btn" onclick="react(this, 'like', 'c2')">
+                            <i class="heart-icon"></i>
+                            <span class="react-count">31</span>
+                        </button>
+                        <button class="react-btn" onclick="react(this, 'dislike', 'c2')">
+                            <i class="fa-regular fa-circle-xmark"></i>
+                            <span class="react-count">1</span>
+                        </button>
+                    </div>
+                    <a href="#" class="download-btn" onclick="handleDownload(event, 'Employee_Handbook_2026.pdf')">
+                        <i class="fas fa-download"></i> Download PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- update - olive green left stripe -->
+        <div class="col-12 col-md-6 card-wrapper" data-type="update">
+            <div class="content-card card-update">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                    <span class="type-label">Update</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="date-text">8 Mar 2026</span>
+                        <!-- admin only - backend team: only render when user.is_staff is true -->
+                        <button class="remove-btn" onclick="removeCard(this)" title="Remove post">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <h5 style="font-weight:bold; margin-bottom:0.4rem;">
+                    Pension Scheme Update — Action Required by 31st March
+                </h5>
+                <p style="color:#9ca3af; font-size:0.85rem; line-height:1.6;">
+                    Important changes to the company pension scheme take effect next month.
+                    All employees must review and confirm their contribution preferences before the deadline.
+                </p>
+                <div class="card-footer-row">
+                    <div class="reaction-group">
+                        <button class="react-btn" onclick="react(this, 'like', 'c3')">
+                            <i class="heart-icon"></i>
+                            <span class="react-count">7</span>
+                        </button>
+                        <button class="react-btn" onclick="react(this, 'dislike', 'c3')">
+                            <i class="fa-regular fa-circle-xmark"></i>
+                            <span class="react-count">4</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- file - amber yellow left stripe -->
+        <div class="col-12 col-md-6 card-wrapper" data-type="file">
+            <div class="content-card card-file">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                    <span class="type-label">File</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="date-text">5 Mar 2026</span>
+                        <!-- admin only - backend team: only render when user.is_staff is true -->
+                        <button class="remove-btn" onclick="removeCard(this)" title="Remove post">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <h5 style="font-weight:bold; margin-bottom:0.4rem;">
+                    Q1 Training Schedule 2026 — All Academies
+                </h5>
+                <p style="color:#9ca3af; font-size:0.85rem; line-height:1.6;">
+                    Full training schedule for Q1 across all FDM academies. Includes session dates,
+                    facilitators, and room allocations for Nottingham, London, and Leeds.
+                </p>
+                <div class="card-footer-row">
+                    <div class="reaction-group">
+                        <button class="react-btn" onclick="react(this, 'like', 'c4')">
+                            <i class="heart-icon"></i>
+                            <span class="react-count">14</span>
+                        </button>
+                        <button class="react-btn" onclick="react(this, 'dislike', 'c4')">
+                            <i class="fa-regular fa-circle-xmark"></i>
+                            <span class="react-count">0</span>
+                        </button>
+                    </div>
+                    <a href="#" class="download-btn" onclick="handleDownload(event, 'Q1_Training_Schedule.xlsx')">
+                        <i class="fas fa-download"></i> Download
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- policy - slate grey left stripe -->
+        <div class="col-12 col-md-6 card-wrapper" data-type="policy">
+            <div class="content-card card-policy">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                    <span class="type-label">Policy</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="date-text">1 Mar 2026</span>
+                        <!-- admin only - backend team: only render when user.is_staff is true -->
+                        <button class="remove-btn" onclick="removeCard(this)" title="Remove post">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <h5 style="font-weight:bold; margin-bottom:0.4rem;">
+                    Hybrid Working Policy — Updated Guidelines for 2026
+                </h5>
+                <p style="color:#9ca3af; font-size:0.85rem; line-height:1.6;">
+                    Revised guidance on hybrid working including minimum in-office requirements,
+                    flexible working requests, and equipment allowances for remote employees.
+                </p>
+                <div class="card-footer-row">
+                    <div class="reaction-group">
+                        <button class="react-btn" onclick="react(this, 'like', 'c5')">
+                            <i class="heart-icon"></i>
+                            <span class="react-count">45</span>
+                        </button>
+                        <button class="react-btn" onclick="react(this, 'dislike', 'c5')">
+                            <i class="fa-regular fa-circle-xmark"></i>
+                            <span class="react-count">6</span>
+                        </button>
+                    </div>
+                    <a href="#" class="download-btn" onclick="handleDownload(event, 'Hybrid_Working_Policy.pdf')">
+                        <i class="fas fa-download"></i> Download
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- news - soft white left stripe -->
+        <div class="col-12 col-md-6 card-wrapper" data-type="news">
+            <div class="content-card card-news">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                    <span class="type-label">News</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="date-text">27 Feb 2026</span>
+                        <!-- admin only - backend team: only render when user.is_staff is true -->
+                        <button class="remove-btn" onclick="removeCard(this)" title="Remove post">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <h5 style="font-weight:bold; margin-bottom:0.4rem;">
+                    FDM Named Best Tech Employer 2026 — Industry Awards
+                </h5>
+                <p style="color:#9ca3af; font-size:0.85rem; line-height:1.6;">
+                    FDM has been recognised as one of the best technology employers in the UK
+                    for 2026 at the National Technology Awards ceremony in London.
+                </p>
+                <div class="card-footer-row">
+                    <div class="reaction-group">
+                        <button class="react-btn" onclick="react(this, 'like', 'c6')">
+                            <i class="heart-icon"></i>
+                            <span class="react-count">92</span>
+                        </button>
+                        <button class="react-btn" onclick="react(this, 'dislike', 'c6')">
+                            <i class="fa-regular fa-circle-xmark"></i>
+                            <span class="react-count">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- social footer using FDMs actual accounts and their real tagline -->
+    <div class="social-footer">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <span style="color:#c8fd14; font-size:1.3rem; font-weight:bold;">FDM</span>
+            <div>
+                <p style="margin:0; font-weight:600; font-size:0.875rem;">FDM Group</p>
+                <p style="margin:0; color:#555; font-size:0.8rem;">Powering the people behind tech and innovation</p>
+            </div>
+        </div>
+        <div>
+            <a href="https://www.instagram.com/fdm_group" target="_blank" class="social-icon">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.facebook.com/FDMGroup" target="_blank" class="social-icon">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="https://twitter.com/FDMGroup" target="_blank" class="social-icon">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://www.linkedin.com/company/fdm-group" target="_blank" class="social-icon">
+                <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="https://www.tiktok.com/@fdm_group" target="_blank" class="social-icon">
+                <i class="fab fa-tiktok"></i>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<!-- upload modal - admin only -->
+<!-- to be connected to Django backend by backend team -->
+<div class="upload-modal" id="uploadModal">
+    <div class="modal-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+            <h5 style="margin:0; font-weight:bold;">Upload Content</h5>
+            <button onclick="closeUploadModal()"
+                style="background:none; border:none; color:#666; cursor:pointer; font-size:1.1rem;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <input class="modal-input" type="text" placeholder="Title">
+        <textarea class="modal-input" placeholder="Description" rows="3" style="resize:none;"></textarea>
+        <select class="modal-input">
+            <option value="">Select content type...</option>
+            <option value="news">News</option>
+            <option value="file">File</option>
+            <option value="policy">Policy</option>
+            <option value="update">Update</option>
+        </select>
+        <div style="border:2px dashed #3a3a3a; border-radius:8px; padding:1.5rem;
+            text-align:center; color:#555; font-size:0.825rem; margin-bottom:10px;">
+            <i class="fas fa-cloud-upload-alt" style="font-size:1.5rem; display:block; margin-bottom:6px;"></i>
+            Drag and drop a file here, or click to browse
+        </div>
+        <button style="background:#c8fd14; border:none; border-radius:8px; padding:10px;
+            width:100%; color:#1e1e1e; font-weight:bold; font-size:0.875rem; cursor:pointer;">
+            Upload
+        </button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // storing reaction state so I can toggle on and off
+    var reactionState = {};
+
+    // handles heart and circle-x clicks - instagram/facebook style
+    function react(btn, type, id) {
+        var key = id + '_' + type;
+        var oppositeType = type === 'like' ? 'dislike' : 'like';
+        var oppositeKey = id + '_' + oppositeType;
+        var countSpan = btn.querySelector('.react-count');
+
+        // find the opposite button in the same parent group
+        var parent = btn.parentElement;
+        var buttons = parent.querySelectorAll('.react-btn');
+        var oppositeBtn = null;
+        for (var i = 0; i < buttons.length; i++) {
+            if (buttons[i] !== btn) oppositeBtn = buttons[i];
+        }
+
+        if (reactionState[key]) {
+            // already active so untoggle it
+            reactionState[key] = false;
+            btn.classList.remove('liked', 'disliked');
+            countSpan.textContent = parseInt(countSpan.textContent) - 1;
+        } else {
+            // not active so turn it on
+            reactionState[key] = true;
+            btn.classList.add(type === 'like' ? 'liked' : 'disliked');
+            countSpan.textContent = parseInt(countSpan.textContent) + 1;
+
+            // untoggle the opposite if it was active
+            if (reactionState[oppositeKey] && oppositeBtn) {
+                reactionState[oppositeKey] = false;
+                oppositeBtn.classList.remove('liked', 'disliked');
+                var oppSpan = oppositeBtn.querySelector('.react-count');
+                oppSpan.textContent = parseInt(oppSpan.textContent) - 1;
+            }
+        }
+    }
+
+    // filters cards and changes button colour to match the stripe
+    function filterCards(btn, type) {
+        // remove all active classes first
+        var filterBtns = document.querySelectorAll('.filter-btn');
+        for (var i = 0; i < filterBtns.length; i++) {
+            filterBtns[i].className = 'filter-btn';
+        }
+
+        // apply the matching active class
+        if (type === 'all')    btn.classList.add('active-all');
+        if (type === 'news')   btn.classList.add('active-news');
+        if (type === 'file')   btn.classList.add('active-file');
+        if (type === 'policy') btn.classList.add('active-policy');
+        if (type === 'update') btn.classList.add('active-update');
+
+        // show or hide cards
+        var wrappers = document.querySelectorAll('.card-wrapper');
+        var visible = 0;
+        for (var i = 0; i < wrappers.length; i++) {
+            if (type === 'all' || wrappers[i].dataset.type === type) {
+                wrappers[i].style.display = '';
+                visible++;
+            } else {
+                wrappers[i].style.display = 'none';
+            }
+        }
+        document.getElementById('visibleCount').textContent = visible + ' items';
+        checkNoResults(visible);
+    }
+
+    // filters cards as the user types
+    function searchCards(query) {
+        var q = query.toLowerCase();
+        var wrappers = document.querySelectorAll('.card-wrapper');
+        var visible = 0;
+        for (var i = 0; i < wrappers.length; i++) {
+            var cardText = wrappers[i].textContent.toLowerCase();
+            if (!q || cardText.includes(q)) {
+                wrappers[i].style.display = '';
+                visible++;
+            } else {
+                wrappers[i].style.display = 'none';
+            }
+        }
+        document.getElementById('visibleCount').textContent = visible + ' items';
+        checkNoResults(visible);
+    }
+
+    function checkNoResults(count) {
+        document.getElementById('noResults').style.display = count === 0 ? 'block' : 'none';
+    }
+
+    // removes a card when admin clicks trash icon
+    // actual deletion from database to be handled by backend team
+    function removeCard(btn) {
+        var wrapper = btn.closest('.card-wrapper');
+        if (confirm('Are you sure you want to remove this post?')) {
+            wrapper.style.display = 'none';
+            var visible = document.querySelectorAll('.card-wrapper:not([style*="none"])').length;
+            document.getElementById('visibleCount').textContent = visible + ' items';
+        }
+    }
+
+    // shows loading animation when a file is downloaded
+    function handleDownload(e, filename) {
+        e.preventDefault();
+        var btn = e.currentTarget;
+        var original = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+        setTimeout(function() {
+            btn.innerHTML = '<i class="fas fa-check"></i> Done';
+            setTimeout(function() { btn.innerHTML = original; }, 2000);
+        }, 800);
+    }
+
+    function showUploadModal() {
+        document.getElementById('uploadModal').style.display = 'flex';
+    }
+
+    function closeUploadModal() {
+        document.getElementById('uploadModal').style.display = 'none';
+    }
+
+    // close modal when clicking outside of it
+    document.getElementById('uploadModal').addEventListener('click', function(e) {
+        if (e.target === this) closeUploadModal();
+    });
+</script>
+
+</body>
+</html>

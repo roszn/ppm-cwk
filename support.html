@@ -1,0 +1,513 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FDM Employee Portal - Support</title>
+
+    <!-- bootstrap for layout -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+
+        body {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* navbar - same as other pages */
+        .navbar {
+            background-color: #111111;
+            border-bottom: 1px solid #2e2e2e;
+        }
+
+        .navbar-brand {
+            color: #c8fd14 !important;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+
+        .nav-link {
+            color: #9ca3af !important;
+        }
+
+        .nav-link:hover {
+            color: #f0f0f0 !important;
+        }
+
+        .nav-link.active {
+            color: #c8fd14 !important;
+        }
+
+        /* page heading */
+        .page-heading {
+            padding: 2rem 0 1.25rem 0;
+        }
+
+        .page-heading h1 {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .green-text {
+            color: #c8fd14;
+        }
+
+        .heading-divider {
+            height: 2px;
+            background: linear-gradient(to right, #c8fd14, transparent);
+            border: none;
+            margin: 1rem 0 1.5rem 0;
+            opacity: 0.4;
+        }
+
+        /* the submit a ticket form card */
+        .form-card {
+            background-color: #242424;
+            border: 1px solid #2e2e2e;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-card:hover {
+            border-color: #444;
+        }
+
+        .card-title {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.25rem;
+        }
+
+        /* form inputs - same style as profile page */
+        .support-input {
+            background-color: #1e1e1e;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #f0f0f0;
+            width: 100%;
+            font-size: 0.875rem;
+            font-family: Arial, sans-serif;
+            margin-bottom: 12px;
+        }
+
+        .support-input:focus {
+            outline: none;
+            border-color: #c8fd14;
+        }
+
+        .support-textarea {
+            background-color: #1e1e1e;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #f0f0f0;
+            width: 100%;
+            font-size: 0.875rem;
+            font-family: Arial, sans-serif;
+            resize: none;
+            margin-bottom: 12px;
+        }
+
+        .support-textarea:focus {
+            outline: none;
+            border-color: #c8fd14;
+        }
+
+        .support-select {
+            background-color: #1e1e1e;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #f0f0f0;
+            width: 100%;
+            font-size: 0.875rem;
+            font-family: Arial, sans-serif;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .support-select:focus {
+            outline: none;
+            border-color: #c8fd14;
+        }
+
+        .field-label {
+            font-size: 0.75rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        /* submit button */
+        .submit-btn {
+            background-color: #c8fd14;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 20px;
+            color: #1e1e1e;
+            font-weight: bold;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.85;
+        }
+
+        /* success message after submitting */
+        .submit-success {
+            display: none;
+            background-color: rgba(197, 255, 0, 0.06);
+            border: 1px solid rgba(197, 255, 0, 0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #c8fd14;
+            font-size: 0.875rem;
+            margin-top: 12px;
+        }
+
+        /* previous tickets section */
+        .ticket-card {
+            background-color: #242424;
+            border: 1px solid #2e2e2e;
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .ticket-card:hover {
+            border-color: #444;
+        }
+
+        .ticket-subject {
+            font-weight: bold;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .ticket-meta {
+            font-size: 0.75rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .ticket-description {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            line-height: 1.6;
+        }
+
+        /* status indicators - dot and coloured text, no box */
+        .status-badge {
+            font-size: 0.78rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .status-open {
+            color: #f59e0b;
+        }
+
+        .status-open::before {
+            background-color: #f59e0b;
+        }
+
+        .status-progress {
+            color: #c8fd14;
+        }
+
+        .status-progress::before {
+            background-color: #c8fd14;
+        }
+
+        .status-resolved {
+            color: #9ca3af;
+        }
+
+        .status-resolved::before {
+            background-color: #9ca3af;
+        }
+
+        .ticket-footer {
+            border-top: 1px solid #2e2e2e;
+            padding-top: 0.75rem;
+            margin-top: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- navbar same as other pages -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="#">FDM Portal</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" style="border-color:#3a3a3a;">
+            <span class="navbar-toggler-icon" style="filter:invert(1);"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="/homepage">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/profile">My Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="/holiday">Book Leave</a></li>
+                <li class="nav-item"><a class="nav-link" href="/calendar">Calendar</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#">Support</a></li>
+            </ul>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:32px; height:32px; background:#c8fd14; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#1e1e1e; font-weight:bold; font-size:0.8rem;">U</div>
+                <span style="font-size:0.875rem; color:#9ca3af;">Welcome, User</span>
+                <a href="/logout" style="font-size:0.8rem; color:#555; text-decoration:none; margin-left:8px;">Log out</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="page-heading">
+        <h1>Help & <span class="green-text">Support</span></h1>
+        <p style="color:#9ca3af; margin-top:0.4rem;">Report a technical issue or submit an admin request</p>
+        <hr class="heading-divider">
+    </div>
+
+    <div class="row">
+
+        <!-- submit a ticket form -->
+        <div class="col-12 col-md-6 mb-3">
+            <div class="form-card">
+                <div class="card-title">Submit a Ticket</div>
+
+                <div class="field-label">Subject</div>
+                <input class="support-input" type="text" id="ticketSubject" placeholder="Brief description of your issue">
+
+                <div class="field-label">Category</div>
+                <select class="support-select" id="ticketCategory">
+                    <option value="">Select a category...</option>
+                    <option value="it">IT Issue</option>
+                    <option value="hr">HR Query</option>
+                    <option value="access">Access Request</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <div class="field-label">Priority</div>
+                <select class="support-select" id="ticketPriority">
+                    <option value="">Select priority...</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+
+                <div class="field-label">Description</div>
+                <textarea class="support-textarea" id="ticketDescription" rows="5" placeholder="Please describe your issue in as much detail as possible..."></textarea>
+
+                <button class="submit-btn" onclick="submitTicket()">
+                    <i class="fas fa-paper-plane" style="font-size:0.75rem; margin-right:5px;"></i> Submit Ticket
+                </button>
+
+                <!-- shows when the ticket is submitted successfully -->
+                <div class="submit-success" id="submitSuccess">
+                    <i class="fas fa-check-circle" style="margin-right:6px;"></i>
+                    Your ticket has been submitted. We'll get back to you as soon as possible.
+                </div>
+            </div>
+        </div>
+
+        <!-- info box on the right -->
+        <div class="col-12 col-md-6 mb-3">
+            <div class="form-card" style="margin-bottom:1rem;">
+                <div class="card-title">Need Help?</div>
+                <p style="color:#9ca3af; font-size:0.875rem; line-height:1.7; margin-bottom:1rem;">
+                    Use this page to report any technical issues, request access to systems, or raise an admin query with the team.
+                </p>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <i class="fas fa-laptop" style="color:#c8fd14; width:16px;"></i>
+                        <span style="font-size:0.85rem; color:#9ca3af;">IT issues — login problems, software faults</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <i class="fas fa-user-shield" style="color:#c8fd14; width:16px;"></i>
+                        <span style="font-size:0.85rem; color:#9ca3af;">Access requests — portal permissions</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <i class="fas fa-envelope" style="color:#c8fd14; width:16px;"></i>
+                        <span style="font-size:0.85rem; color:#9ca3af;">HR queries — payroll, contracts, policies</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- previous tickets section -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+        <span style="font-size:0.75rem; color:#555; text-transform:uppercase; letter-spacing:1px; font-weight:bold;">My Tickets</span>
+        <span style="font-size:0.75rem; color:#555;" id="ticketCount">3 tickets</span>
+    </div>
+
+    <div id="ticketsList">
+
+        <!-- ticket 1 - in progress -->
+        <div class="ticket-card">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
+                <div class="ticket-subject">Cannot access shared drive on portal</div>
+                <span class="status-badge status-progress">In Progress</span>
+            </div>
+            <div class="ticket-meta">
+                <i class="fas fa-laptop" style="margin-right:4px;"></i> IT Issue &nbsp;·&nbsp; Submitted 18 Mar 2026
+            </div>
+            <div class="ticket-description">
+                I am unable to access the shared documents folder through the portal. I get an error saying access denied when I try to open any files.
+            </div>
+            <div class="ticket-footer">
+                <span style="font-size:0.75rem; color:#666;">Ticket #1042</span>
+                <span style="font-size:0.75rem; color:#9ca3af;">Last updated: 19 Mar 2026</span>
+            </div>
+        </div>
+
+        <!-- ticket 2 - open -->
+        <div class="ticket-card">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
+                <div class="ticket-subject">Request access to HR system</div>
+                <span class="status-badge status-open">Open</span>
+            </div>
+            <div class="ticket-meta">
+                <i class="fas fa-user-shield" style="margin-right:4px;"></i> Access Request &nbsp;·&nbsp; Submitted 15 Mar 2026
+            </div>
+            <div class="ticket-description">
+                I need access to the HR system to view my payslips and update my bank details. Please could this be set up for my account.
+            </div>
+            <div class="ticket-footer">
+                <span style="font-size:0.75rem; color:#666;">Ticket #1038</span>
+                <span style="font-size:0.75rem; color:#9ca3af;">Last updated: 15 Mar 2026</span>
+            </div>
+        </div>
+
+        <!-- ticket 3 - resolved -->
+        <div class="ticket-card">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
+                <div class="ticket-subject">Password reset not working</div>
+                <span class="status-badge status-resolved">Resolved</span>
+            </div>
+            <div class="ticket-meta">
+                <i class="fas fa-laptop" style="margin-right:4px;"></i> IT Issue &nbsp;·&nbsp; Submitted 2 Mar 2026
+            </div>
+            <div class="ticket-description">
+                The password reset email was not arriving in my inbox. Issue has now been resolved by the IT team.
+            </div>
+            <div class="ticket-footer">
+                <span style="font-size:0.75rem; color:#666;">Ticket #1021</span>
+                <span style="font-size:0.75rem; color:#9ca3af;">Resolved: 3 Mar 2026</span>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    // handles the ticket form submission
+    function submitTicket() {
+        var subject = document.getElementById('ticketSubject').value;
+        var category = document.getElementById('ticketCategory').value;
+        var priority = document.getElementById('ticketPriority').value;
+        var description = document.getElementById('ticketDescription').value;
+
+        // basic validation - make sure the important fields are filled in
+        if (!subject || !category || !description) {
+            alert('Please fill in the subject, category and description before submitting.');
+            return;
+        }
+
+        // show the success message
+        document.getElementById('submitSuccess').style.display = 'block';
+
+        // add the new ticket to the top of the list
+        addTicketToList(subject, category);
+
+        // clear the form
+        document.getElementById('ticketSubject').value = '';
+        document.getElementById('ticketCategory').value = '';
+        document.getElementById('ticketPriority').value = '';
+        document.getElementById('ticketDescription').value = '';
+
+        // hide the success message after a few seconds
+        setTimeout(function() {
+            document.getElementById('submitSuccess').style.display = 'none';
+        }, 4000);
+
+        // to be connected to backend team - this is where we send the ticket data to Django
+    }
+
+    // adds a new ticket card to the top of the list
+    function addTicketToList(subject, category) {
+        var categoryLabels = {
+            'it': 'IT Issue',
+            'hr': 'HR Query',
+            'access': 'Access Request',
+            'other': 'Other'
+        };
+
+        var categoryIcons = {
+            'it': 'fa-laptop',
+            'hr': 'fa-envelope',
+            'access': 'fa-user-shield',
+            'other': 'fa-question-circle'
+        };
+
+        var today = new Date();
+        var dateStr = today.getDate() + ' ' + today.toLocaleString('default', { month: 'short' }) + ' ' + today.getFullYear();
+
+        var newTicket = document.createElement('div');
+        newTicket.className = 'ticket-card';
+        newTicket.innerHTML =
+            '<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">' +
+                '<div class="ticket-subject">' + subject + '</div>' +
+                '<span class="status-badge status-open">Open</span>' +
+            '</div>' +
+            '<div class="ticket-meta">' +
+                '<i class="fas ' + (categoryIcons[category] || 'fa-question-circle') + '" style="margin-right:4px;"></i> ' +
+                (categoryLabels[category] || 'Other') + ' &nbsp;·&nbsp; Submitted ' + dateStr +
+            '</div>' +
+            '<div class="ticket-footer">' +
+                '<span style="font-size:0.75rem; color:#666;">Ticket #' + Math.floor(Math.random() * 100 + 1100) + '</span>' +
+                '<span style="font-size:0.75rem; color:#9ca3af;">Just submitted</span>' +
+            '</div>';
+
+        // add it to the top of the list
+        var list = document.getElementById('ticketsList');
+        list.insertBefore(newTicket, list.firstChild);
+
+        // update the ticket count
+        var count = list.querySelectorAll('.ticket-card').length;
+        document.getElementById('ticketCount').textContent = count + ' tickets';
+    }
+
+</script>
+
+</body>
+</html>

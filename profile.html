@@ -1,0 +1,649 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FDM Employee Portal - My Profile</title>
+
+    <!-- bootstrap for layout -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+
+        body {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* navbar - same as homepage */
+        .navbar {
+            background-color: #111111;
+            border-bottom: 1px solid #2e2e2e;
+        }
+
+        .navbar-brand {
+            color: #c8fd14 !important;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+
+        .nav-link {
+            color: #9ca3af !important;
+        }
+
+        .nav-link:hover {
+            color: #f0f0f0 !important;
+        }
+
+        .nav-link.active {
+            color: #c8fd14 !important;
+        }
+
+        /* page heading */
+        .page-heading {
+            padding: 2rem 0 1.25rem 0;
+        }
+
+        .page-heading h1 {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .green-text {
+            color: #c8fd14;
+        }
+
+        .heading-divider {
+            height: 2px;
+            background: linear-gradient(to right, #c8fd14, transparent);
+            border: none;
+            margin: 1rem 0 1.5rem 0;
+            opacity: 0.4;
+        }
+
+        /* profile header card at the top */
+        .profile-header-card {
+            background-color: #242424;
+            border: 1px solid #2e2e2e;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* profile picture circle */
+        .avatar-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background-color: #2e2e2e;
+            border: 2px solid #3a3a3a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .avatar-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-circle i {
+            font-size: 2.2rem;
+            color: #555;
+        }
+
+        .profile-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #f0f0f0;
+            margin-bottom: 3px;
+        }
+
+        .profile-role {
+            font-size: 0.875rem;
+            color: #9ca3af;
+            margin-bottom: 3px;
+        }
+
+        .profile-about {
+            font-size: 0.8rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* edit and save buttons */
+        .edit-btn {
+            background-color: #c8fd14;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            color: #1e1e1e;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .edit-btn:hover {
+            opacity: 0.85;
+        }
+
+        .save-btn {
+            background-color: #c8fd14;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            color: #1e1e1e;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: none;
+            margin-left: 8px;
+        }
+
+        .cancel-btn {
+            background: none;
+            border: 1px solid #3a3a3a;
+            border-radius: 6px;
+            padding: 6px 16px;
+            color: #9ca3af;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: none;
+            margin-left: auto;
+        }
+
+        /* the info cards */
+        .info-card {
+            background-color: #242424;
+            border: 1px solid #2e2e2e;
+            border-radius: 10px;
+            padding: 1.2rem;
+            height: 100%;
+        }
+
+        .info-card:hover {
+            border-color: #444;
+        }
+
+        .card-section-title {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .visible-tag {
+            font-size: 0.7rem;
+            color: #c8fd14;
+            font-weight: normal;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        /* each row in the info card */
+        .info-row {
+            border-top: 1px solid #2e2e2e;
+            padding-top: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .info-row:first-of-type {
+            border-top: none;
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        .info-label {
+            font-size: 0.72rem;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-size: 0.875rem;
+            color: #f0f0f0;
+        }
+
+        .info-value.empty {
+            color: #555;
+            font-style: italic;
+        }
+
+        /* editable input fields - hidden by default */
+        .edit-input {
+            background-color: #1e1e1e;
+            border: 1px solid #3a3a3a;
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: #f0f0f0;
+            font-size: 0.875rem;
+            width: 100%;
+            font-family: Arial, sans-serif;
+            display: none;
+        }
+
+        .edit-input:focus {
+            outline: none;
+            border-color: #c8fd14;
+        }
+
+        .edit-textarea {
+            background-color: #1e1e1e;
+            border: 1px solid #3a3a3a;
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: #f0f0f0;
+            font-size: 0.875rem;
+            width: 100%;
+            font-family: Arial, sans-serif;
+            resize: none;
+            display: none;
+        }
+
+        .edit-textarea:focus {
+            outline: none;
+            border-color: #c8fd14;
+        }
+
+        /* private section is greyed out for non admins */
+        /* backend team: show this fully when user.is_staff is true */
+        .private-card {
+            background-color: #242424;
+            border: 1px solid #2e2e2e;
+            border-radius: 10px;
+            padding: 1.2rem;
+            height: 100%;
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        .private-card.admin-view {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .lock-tag {
+            font-size: 0.7rem;
+            color: #666;
+            font-weight: normal;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        /* hidden salary dots */
+        .salary-hidden {
+            letter-spacing: 3px;
+            color: #666;
+        }
+
+        /* change picture button that shows on hover */
+        .avatar-overlay {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            flex-shrink: 0;
+        }
+
+        .avatar-overlay .avatar-circle {
+            width: 100%;
+            height: 100%;
+        }
+
+        .avatar-change-btn {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: #c8fd14;
+            font-size: 0.6rem;
+            text-align: center;
+            padding: 3px;
+            border-radius: 0 0 50% 50%;
+            display: none;
+            cursor: pointer;
+        }
+
+        .avatar-overlay:hover .avatar-change-btn {
+            display: block;
+        }
+
+        /* success message */
+        .save-success {
+            display: none;
+            color: #c8fd14;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- navbar - same as homepage -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="#">FDM Portal</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" style="border-color:#3a3a3a;">
+            <span class="navbar-toggler-icon" style="filter:invert(1);"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="/homepage">Home</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#">My Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="/holiday">Book Leave</a></li>
+                <li class="nav-item"><a class="nav-link" href="/calendar">Calendar</a></li>
+                <li class="nav-item"><a class="nav-link" href="/support">Support</a></li>
+            </ul>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:32px; height:32px; background:#c8fd14; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#1e1e1e; font-weight:bold; font-size:0.8rem;">U</div>
+                <span style="font-size:0.875rem; color:#9ca3af;">Welcome, User</span>
+                <a href="/logout" style="font-size:0.8rem; color:#555; text-decoration:none; margin-left:8px;">Log out</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="page-heading">
+        <h1>My <span class="green-text">Profile</span></h1>
+        <p style="color:#9ca3af; margin-top:0.4rem;">View and manage your profile information</p>
+        <hr class="heading-divider">
+    </div>
+
+    <!-- profile header card with picture, name, role and edit button -->
+    <div class="profile-header-card">
+        <!-- profile picture - clicking it lets you change it -->
+        <div class="avatar-overlay">
+            <div class="avatar-circle" id="avatarCircle">
+                <i class="fas fa-user"></i>
+            </div>
+            <!-- change picture only shows when in edit mode -->
+            <div class="avatar-change-btn" id="changePicBtn" onclick="changePicture()">change</div>
+        </div>
+
+        <div style="flex:1;">
+            <!-- shows the name normally -->
+            <div class="profile-name" id="displayName">User Name</div>
+            <!-- input to edit the name - hidden until edit is clicked -->
+            <input class="edit-input" id="editName" type="text" value="User Name" placeholder="Your name">
+            <div class="profile-role" id="displayRole">Job Role — Department</div>
+            <div class="profile-about" id="displayAbout">Click edit to add something about yourself...</div>
+        </div>
+
+        <div style="display:flex; align-items:center;">
+            <button class="cancel-btn" id="cancelBtn" onclick="cancelEdit()">Cancel</button>
+            <button class="edit-btn" id="editBtn" onclick="startEdit()">
+                <i class="fas fa-pen" style="font-size:0.7rem; margin-right:4px;"></i> Edit Profile
+            </button>
+            <button class="save-btn" id="saveBtn" onclick="saveProfile()">
+                <i class="fas fa-check" style="font-size:0.7rem; margin-right:4px;"></i> Save
+            </button>
+            <span class="save-success" id="saveSuccess"><i class="fas fa-check-circle"></i> Saved!</span>
+        </div>
+    </div>
+
+    <!-- two column layout - public info and private info -->
+    <div class="row">
+
+        <!-- public info - employees can edit this themselves -->
+        <div class="col-12 col-md-6 mb-3">
+            <div class="info-card">
+                <div class="card-section-title">
+                    Public Info
+                    <span class="visible-tag">Visible to all staff</span>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Job Role</div>
+                    <div class="info-value" id="displayJobRole">Frontend Developer</div>
+                    <input class="edit-input" id="editJobRole" type="text" value="Frontend Developer" placeholder="Your job role">
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Department</div>
+                    <div class="info-value" id="displayDepartment">Technology</div>
+                    <input class="edit-input" id="editDepartment" type="text" value="Technology" placeholder="Your department">
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Description</div>
+                    <div class="info-value" id="displayDescription">Working on the FDM employee portal frontend.</div>
+                    <textarea class="edit-textarea" id="editDescription" rows="2" placeholder="Short description of your role">Working on the FDM employee portal frontend.</textarea>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">About Me</div>
+                    <div class="info-value empty" id="displayAboutMe">Nothing added yet...</div>
+                    <textarea class="edit-textarea" id="editAboutMe" rows="3" placeholder="Tell people a bit about yourself..."></textarea>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- private info - admin only -->
+        <!-- backend team: remove the opacity and pointer-events when user.is_staff is true -->
+        <div class="col-12 col-md-6 mb-3">
+            <div class="private-card" id="privateCard">
+                <div class="card-section-title">
+                    Private Info
+                    <span class="lock-tag"><i class="fas fa-lock" style="font-size:0.65rem; margin-right:3px;"></i>Admin only</span>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Line Manager</div>
+                    <div class="info-value" id="displayLineManager">Sarah Johnson</div>
+                    <!-- admin edit input - to be connected to backend team -->
+                    <input class="edit-input" id="editLineManager" type="text" value="Sarah Johnson" placeholder="Line manager name">
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Salary</div>
+                    <!-- salary is hidden by default for privacy -->
+                    <div class="info-value" id="displaySalary">
+                        <span class="salary-hidden" id="salaryDots">••••••</span>
+                        <button onclick="toggleSalary()" style="background:none; border:none; color:#9ca3af; font-size:0.7rem; cursor:pointer; margin-left:8px;" id="salaryToggleBtn">show</button>
+                    </div>
+                    <span id="salaryActual" style="display:none; font-size:0.875rem;">£35,000</span>
+                    <input class="edit-input" id="editSalary" type="text" value="£35,000" placeholder="Salary">
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Phone Number</div>
+                    <div class="info-value" id="displayPhone">+44 7700 000000</div>
+                    <input class="edit-input" id="editPhone" type="text" value="+44 7700 000000" placeholder="Phone number">
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Home Address</div>
+                    <div class="info-value" id="displayAddress">123 Example Street, Nottingham</div>
+                    <input class="edit-input" id="editAddress" type="text" value="123 Example Street, Nottingham" placeholder="Home address">
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Date of Birth</div>
+                    <div class="info-value" id="displayDob">01/01/1998</div>
+                    <input class="edit-input" id="editDob" type="text" value="01/01/1998" placeholder="Date of birth">
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Emergency Contact</div>
+                    <div class="info-value" id="displayEmergency">Jane Harper — +44 7700 111111</div>
+                    <input class="edit-input" id="editEmergency" type="text" value="Jane Harper — +44 7700 111111" placeholder="Emergency contact">
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- hidden file input for changing profile picture -->
+<input type="file" id="pictureUpload" accept="image/*" style="display:none;" onchange="handlePictureUpload(event)">
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    var isEditing = false;
+
+    // switches the page into edit mode
+    function startEdit() {
+        isEditing = true;
+
+        // show the edit inputs and hide the display values
+        document.getElementById('editName').style.display = 'block';
+        document.getElementById('displayName').style.display = 'none';
+
+        document.getElementById('editJobRole').style.display = 'block';
+        document.getElementById('displayJobRole').style.display = 'none';
+
+        document.getElementById('editDepartment').style.display = 'block';
+        document.getElementById('displayDepartment').style.display = 'none';
+
+        document.getElementById('editDescription').style.display = 'block';
+        document.getElementById('displayDescription').style.display = 'none';
+
+        document.getElementById('editAboutMe').style.display = 'block';
+        document.getElementById('displayAboutMe').style.display = 'none';
+
+        // show save and cancel, hide edit button
+        document.getElementById('editBtn').style.display = 'none';
+        document.getElementById('saveBtn').style.display = 'block';
+        document.getElementById('cancelBtn').style.display = 'block';
+
+        // show the change picture button
+        document.getElementById('changePicBtn').style.display = 'block';
+
+        // if admin is editing also show private fields
+        // backend team: add a check for user.is_staff here
+        var adminEditing = false;
+        if (adminEditing) {
+            document.getElementById('editLineManager').style.display = 'block';
+            document.getElementById('displayLineManager').style.display = 'none';
+            document.getElementById('editSalary').style.display = 'block';
+            document.getElementById('editPhone').style.display = 'block';
+            document.getElementById('editAddress').style.display = 'block';
+            document.getElementById('editDob').style.display = 'block';
+            document.getElementById('editEmergency').style.display = 'block';
+        }
+    }
+
+    // saves the changes and goes back to display mode
+    function saveProfile() {
+        // get the new values from the inputs
+        var newName = document.getElementById('editName').value;
+        var newJobRole = document.getElementById('editJobRole').value;
+        var newDepartment = document.getElementById('editDepartment').value;
+        var newDescription = document.getElementById('editDescription').value;
+        var newAboutMe = document.getElementById('editAboutMe').value;
+
+        // update the display values
+        document.getElementById('displayName').textContent = newName;
+        document.getElementById('displayJobRole').textContent = newJobRole;
+        document.getElementById('displayDepartment').textContent = newDepartment;
+        document.getElementById('displayDescription').textContent = newDescription;
+        document.getElementById('displayRole').textContent = newJobRole + ' — ' + newDepartment;
+
+        if (newAboutMe) {
+            document.getElementById('displayAboutMe').textContent = newAboutMe;
+            document.getElementById('displayAboutMe').classList.remove('empty');
+            document.getElementById('displayAbout').textContent = newAboutMe;
+        }
+
+        // switch back to display mode
+        cancelEdit();
+
+        // show a saved confirmation for a couple seconds
+        var successMsg = document.getElementById('saveSuccess');
+        successMsg.style.display = 'inline';
+        setTimeout(function() {
+            successMsg.style.display = 'none';
+        }, 2500);
+
+        // to be connected to backend team - this is where we would send the data to Django
+    }
+
+    // cancels the edit and goes back to display mode
+    function cancelEdit() {
+        isEditing = false;
+
+        document.getElementById('editName').style.display = 'none';
+        document.getElementById('displayName').style.display = 'block';
+
+        document.getElementById('editJobRole').style.display = 'none';
+        document.getElementById('displayJobRole').style.display = 'block';
+
+        document.getElementById('editDepartment').style.display = 'none';
+        document.getElementById('displayDepartment').style.display = 'block';
+
+        document.getElementById('editDescription').style.display = 'none';
+        document.getElementById('displayDescription').style.display = 'block';
+
+        document.getElementById('editAboutMe').style.display = 'none';
+        document.getElementById('displayAboutMe').style.display = 'block';
+
+        document.getElementById('editBtn').style.display = 'block';
+        document.getElementById('saveBtn').style.display = 'none';
+        document.getElementById('cancelBtn').style.display = 'none';
+        document.getElementById('changePicBtn').style.display = 'none';
+    }
+
+    // triggers the hidden file input when change picture is clicked
+    function changePicture() {
+        document.getElementById('pictureUpload').click();
+    }
+
+    // handles the profile picture upload and shows a preview
+    function handlePictureUpload(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+
+        var reader = new FileReader();
+        reader.onload = function(event) {
+            var avatarCircle = document.getElementById('avatarCircle');
+            avatarCircle.innerHTML = '<img src="' + event.target.result + '" alt="Profile picture">';
+        }
+        reader.readAsDataURL(file);
+    }
+
+    // shows or hides the salary value
+    function toggleSalary() {
+        var dots = document.getElementById('salaryDots');
+        var actual = document.getElementById('salaryActual');
+        var btn = document.getElementById('salaryToggleBtn');
+
+        if (dots.style.display === 'none') {
+            dots.style.display = 'inline';
+            actual.style.display = 'none';
+            btn.textContent = 'show';
+        } else {
+            dots.style.display = 'none';
+            actual.style.display = 'inline';
+            btn.textContent = 'hide';
+        }
+    }
+
+</script>
+
+</body>
+</html>

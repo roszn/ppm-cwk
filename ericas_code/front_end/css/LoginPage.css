@@ -1,0 +1,327 @@
+/* ── CSS Variables ── */
+:root {
+    --bg-deep:     #1e1e1e;
+    --bg-dark:     #252525;
+    --bg-mid:      #2e2e2e;
+    --accent:      #c8fd14;
+    --accent-soft: #d8ff50;
+    --text-primary:#f0f0f0;
+    --text-muted:  #888888;
+    --border:      rgba(200,253,20,0.15);
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ── Body ── */
+body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg-deep);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* ── Rocket canvas (replaces grid) ── */
+#rocketCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Page layout ── */
+.page-wrap {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    margin-top: 64px;
+}
+
+/* ── Top bar ── */
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(18,18,18,0.9);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+}
+
+.top-bar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.top-bar-brand img {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    object-fit: contain;
+}
+
+.top-bar-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+}
+
+/* ── Login card ── */
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(37,37,37,0.95);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 2.25rem;
+    backdrop-filter: blur(20px);
+    box-shadow:
+        0 0 0 1px rgba(200,253,20,0.05),
+        0 32px 64px rgba(0,0,0,0.5);
+    animation: cardIn 0.5s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Card brand header ── */
+.card-brand {
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: cardIn 0.5s 0.1s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.card-brand img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+    filter: brightness(1.1);
+}
+
+.card-brand h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.25rem;
+}
+
+.card-brand p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 300;
+}
+
+/* ── Form fields ── */
+.field-group {
+    margin-bottom: 1.1rem;
+    animation: cardIn 0.5s 0.2s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.field-group label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 0.45rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.field-group input {
+    width: 100%;
+    background: rgba(18,18,18,0.7);
+    border: 1px solid rgba(200,253,20,0.2);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    font-family: 'Sora', sans-serif;
+    color: var(--text-primary);
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    outline: none;
+}
+
+.field-group input::placeholder {
+    color: #444444;
+}
+
+.field-group input:focus {
+    border-color: var(--accent);
+    background: rgba(30,30,30,0.9);
+    box-shadow: 0 0 0 3px rgba(200,253,20,0.12);
+}
+
+/* ── Password wrapper ── */
+.password-wrap {
+    position: relative;
+}
+
+.password-wrap input {
+    padding-right: 2.8rem;
+}
+
+.toggle-pw {
+    position: absolute;
+    right: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.15s;
+}
+
+.toggle-pw:hover {
+    color: var(--accent);
+}
+
+/* ── Forgot link ── */
+.forgot-row {
+    text-align: right;
+    margin-top: 0.4rem;
+}
+
+.forgot-row a {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.forgot-row a:hover {
+    color: var(--accent);
+}
+
+/* ── Submit button ── */
+.btn-signin {
+    width: 100%;
+    padding: 0.8rem;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e1e1e;
+    cursor: pointer;
+    margin-top: 1.4rem;
+    letter-spacing: 0.02em;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    animation: cardIn 0.5s 0.3s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.btn-signin:hover {
+    background: var(--accent-soft);
+    box-shadow: 0 6px 24px rgba(200,253,20,0.25);
+}
+
+.btn-signin:active {
+    transform: scale(0.98);
+}
+
+/* ── Divider ── */
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1.4rem 0;
+    animation: cardIn 0.5s 0.35s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+.divider span {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+/* ── Register link ── */
+.register-row {
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    animation: cardIn 0.5s 0.4s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.register-row a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s;
+}
+
+.register-row a:hover {
+    color: var(--accent-soft);
+}
+
+/* ── Error alert ── */
+.alert-fdm {
+    background: rgba(220,50,50,0.1);
+    border: 1px solid rgba(220,50,50,0.3);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    color: #ff8080;
+    margin-bottom: 1.25rem;
+}
+
+/* ── Footer ── */
+footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 1.25rem;
+    font-size: 0.72rem;
+    color: #555555;
+    border-top: 1px solid var(--border);
+    letter-spacing: 0.03em;
+}
+
+footer a {
+    color: #666666;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: var(--text-muted);
+}

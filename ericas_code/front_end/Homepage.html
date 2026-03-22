@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FDM Portal — Home</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Homepage Styles -->
+    <link rel="stylesheet" href="css/Homepage.css">
+    <!-- Django: <link rel="stylesheet" href="{% static 'css/Homepage.css' %}"> -->
+
+    <link rel="shortcut icon" href="https://th.bing.com/th?q=FDM+Group+Company+Logo&w=120&h=120&c=1&rs=1&qlt=70&o=7&cb=1&dpr=1.5&pid=InlineBlock&rm=3&mkt=en-GB&cc=GB&setlang=en&adlt=strict&t=1&mw=247">
+</head>
+<body>
+
+    <!-- ── Navbar ── -->
+    <nav class="fdm-nav">
+        <a class="nav-brand" href="#">
+            <img src="https://th.bing.com/th?q=FDM+Group+Company+Logo&w=120&h=120&c=1&rs=1&qlt=70&o=7&cb=1&dpr=1.5&pid=InlineBlock&rm=3&mkt=en-GB&cc=GB&setlang=en&adlt=strict&t=1&mw=247" alt="FDM">
+            FDM Portal
+        </a>
+        <div class="nav-right">
+            <span class="nav-greeting">Hello, <span>{user's name}</span></span>
+            <div class="nav-icons">
+                <a href="#" class="nav-icon-btn" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                </a>
+                <a href="LoginPage.html" class="nav-icon-btn" title="Log out">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ── Three-column dashboard ── -->
+    <div class="dash-wrap">
+
+        <!-- ════ LEFT: Upcoming Events ════ -->
+        <div class="col-panel events-col">
+            <p class="section-title">Upcoming Events</p>
+
+            <div class="event-card">
+                <div class="event-name"><span class="event-dot"></span>Bank Holiday</div>
+                <div class="event-date">Mon 1 May · Week 23</div>
+            </div>
+
+            <div class="event-card">
+                <div class="event-name"><span class="event-dot"></span>Payday</div>
+                <div class="event-date">Fri 27 March · Week 14</div>
+            </div>
+
+            <div class="event-card">
+                <div class="event-name"><span class="event-dot"></span>Easter Monday</div>
+                <div class="event-date">Mon 6 April</div>
+            </div>
+
+            <div class="event-card">
+                <div class="event-name"><span class="event-dot"></span>FDM Annual Conference</div>
+                <div class="event-date">Wed 22 April</div>
+            </div>
+
+            <div class="event-card">
+                <div class="event-name"><span class="event-dot"></span>Spring Bank Holiday</div>
+                <div class="event-date">Sun 25 May</div>
+            </div>
+        </div>
+
+        <!-- ════ CENTRE: Main ════ -->
+        <div class="col-panel center-col">
+
+            <!-- Welcome banner -->
+            <div class="welcome-banner">
+                <div class="welcome-text">
+                    <h1>Welcome back, {user's name}!</h1>
+                    <p>Here's what's happening at FDM today.</p>
+                </div>
+                <div class="welcome-avatar">👤</div>
+            </div>
+
+            <!-- Info cards -->
+            <div class="info-cards">
+                <div class="info-card">
+                    <div class="info-card-icon">🏖️</div>
+                    <div class="info-card-title">Leave Status</div>
+                    <div class="info-card-sub">View your leave requests</div>
+                    <span class="info-card-badge">No notifications</span>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-icon">💷</div>
+                    <div class="info-card-title">Payslips</div>
+                    <div class="info-card-sub">Access your payslips</div>
+                    <span class="info-card-badge">Next: 27 Mar</span>
+                </div>
+            </div>
+
+            <!-- Calendar card -->
+            <div class="calendar-card"
+                 data-bs-toggle="modal"
+                 data-bs-target="#calendarModal">
+                <div class="calendar-card-left">
+                    <div class="calendar-card-title">View Calendar</div>
+                    <div class="calendar-card-sub">
+                        <span class="cal-live-dot"></span>
+                        1 new event this month
+                    </div>
+                </div>
+                <div class="calendar-card-icon">
+                    <i class="far fa-calendar-alt"></i>
+                </div>
+            </div>
+
+            <!-- Social strip -->
+            <div class="social-strip">
+                <img src="https://th.bing.com/th?q=FDM+Group+Company+Logo&w=120" alt="FDM">
+                <div class="social-icons">
+                    <div class="social-icon"><i class="fab fa-instagram"></i></div>
+                    <div class="social-icon"><i class="fab fa-facebook-f"></i></div>
+                    <div class="social-icon"><i class="fab fa-twitter"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ RIGHT: Profile ════ -->
+        <div class="col-panel profile-col">
+
+            <div class="profile-avatar">
+                <div class="avatar-ring">👤</div>
+                <div class="profile-name">{user's name}</div>
+                <div class="profile-role">// consultant</div>
+            </div>
+
+            <div class="profile-links">
+                <a href="#" class="profile-link">
+                    <span class="profile-link-icon"><i class="fas fa-user"></i></span>Edit Profile
+                </a>
+                <a href="#" class="profile-link">
+                    <span class="profile-link-icon"><i class="fas fa-camera"></i></span>Change Picture
+                </a>
+                <a href="#" class="profile-link">
+                    <span class="profile-link-icon"><i class="fas fa-bell"></i></span>Notifications
+                </a>
+                <a href="#" class="profile-link">
+                    <span class="profile-link-icon"><i class="fas fa-cog"></i></span>Settings
+                </a>
+                <button class="profile-link danger" onclick="window.location.href='LoginPage.html'">
+                    <span class="profile-link-icon"><i class="fas fa-sign-out-alt"></i></span>Log Out
+                </button>
+            </div>
+
+            <div class="status-strip">
+                <div class="status-dot"></div>
+                <span class="status-text">online · active now</span>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ════ CALENDAR MODAL ════ -->
+    <div class="modal fade" id="calendarModal" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background:#1a1a1a; border:1px solid rgba(200,253,20,0.15); border-radius:16px; overflow:hidden;">
+
+                <div class="modal-header" style="background:#222; border-bottom:1px solid rgba(200,253,20,0.1); padding:1rem 1.5rem;">
+                    <h5 class="modal-title" style="font-family:'Sora',sans-serif; font-size:0.85rem; font-weight:600; color:#f0f0f0; letter-spacing:0.05em;">
+                        <i class="far fa-calendar-alt" style="color:#c8fd14; margin-right:8px;"></i> Calendar
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-0">
+                    <div id="fdm-calendar">
+                        <div class="cal-header">
+                            <button class="cal-nav" id="prevMonth">&#8249;</button>
+                            <div class="cal-month-year">
+                                <span id="calMonthName"></span>
+                                <span id="calYear"></span>
+                            </div>
+                            <button class="cal-nav" id="nextMonth">&#8250;</button>
+                        </div>
+                        <div class="cal-weekdays">
+                            <span>Mon</span><span>Tue</span><span>Wed</span>
+                            <span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                        </div>
+                        <div class="cal-grid" id="calGrid"></div>
+                        <div class="cal-events-section">
+                            <h6 class="cal-events-title">Events This Month</h6>
+                            <div id="calEventsList"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Footer ── -->
+    <footer>
+        Copyright &copy; 2026 FDM Portal. All rights reserved &nbsp;&nbsp;
+        <a href="#">Privacy Policy</a> &nbsp;|&nbsp;
+        <a href="#">Legal</a> &nbsp;|&nbsp;
+        <a href="#">Site Map</a> &nbsp; UK
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        #fdm-calendar { font-family:'Sora',sans-serif; background:#1e1e1e; color:#f0f0f0; }
+        .cal-header { display:flex; align-items:center; justify-content:space-between; padding:1.1rem 1.5rem; background:#252525; border-bottom:1px solid rgba(200,253,20,0.1); }
+        .cal-month-year { font-size:0.95rem; font-weight:600; color:#f0f0f0; display:flex; gap:8px; }
+        .cal-nav { background:none; border:1px solid rgba(200,253,20,0.2); color:#c8fd14; width:30px; height:30px; border-radius:50%; font-size:1.1rem; cursor:pointer; transition:background 0.15s; display:flex; align-items:center; justify-content:center; }
+        .cal-nav:hover { background:rgba(200,253,20,0.08); }
+        .cal-weekdays { display:grid; grid-template-columns:repeat(7,1fr); padding:0.7rem 1rem 0.3rem; gap:4px; }
+        .cal-weekdays span { text-align:center; font-size:0.65rem; font-weight:600; letter-spacing:0.1em; color:#555; text-transform:uppercase; }
+        .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; padding:0.3rem 1rem 1rem; }
+        .cal-day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:0.8rem; position:relative; transition:background 0.15s; }
+        .cal-day.other-month { color:#333; }
+        .cal-day.normal { color:#c0c0c0; }
+        .cal-day.normal:hover { background:#2a2a2a; }
+        .cal-day.weekend { color:#555; }
+        .cal-day.today { background:#c8fd14; color:#1e1e1e; font-weight:700; }
+        .cal-day.event-day { background:rgba(200,253,20,0.1); color:#c8fd14; font-weight:600; border:1px solid rgba(200,253,20,0.2); }
+        .cal-day.has-event::after { content:''; position:absolute; bottom:3px; width:4px; height:4px; background:#c8fd14; border-radius:50%; }
+        .cal-day.today.has-event::after { background:#1e1e1e; }
+        .cal-events-section { border-top:1px solid rgba(255,255,255,0.06); padding:1rem 1.5rem 1.25rem; background:#1a1a1a; }
+        .cal-events-title { font-size:0.65rem; text-transform:uppercase; letter-spacing:0.12em; color:#555; margin-bottom:0.75rem; font-weight:600; }
+        .cal-event-item { display:flex; align-items:center; gap:12px; padding:0.5rem 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .cal-event-item:last-child { border-bottom:none; }
+        .cal-event-dot { width:6px; height:6px; background:#c8fd14; border-radius:50%; flex-shrink:0; }
+        .cal-event-name { font-size:0.8rem; color:#d0d0d0; font-weight:500; }
+        .cal-event-date { margin-left:auto; font-size:0.72rem; color:#555; font-family:'DM Mono',monospace; }
+    </style>
+
+    <script>
+        const EVENTS = [
+            { name: "New Year's Day (Bank Holiday)",  date: new Date(2026, 0, 1)  },
+            { name: "Good Friday",                    date: new Date(2026, 3, 3)  },
+            { name: "Easter Monday",                  date: new Date(2026, 3, 6)  },
+            { name: "Early May Bank Holiday",         date: new Date(2026, 4, 4)  },
+            { name: "Spring Bank Holiday",            date: new Date(2026, 4, 25) },
+            { name: "Summer Bank Holiday",            date: new Date(2026, 7, 31) },
+            { name: "Christmas Day",                  date: new Date(2026, 11, 25)},
+            { name: "Boxing Day",                     date: new Date(2026, 11, 28)},
+            { name: "Payday",  date: new Date(2026, 0, 30) },
+            { name: "Payday",  date: new Date(2026, 1, 27) },
+            { name: "Payday",  date: new Date(2026, 2, 27) },
+            { name: "Payday",  date: new Date(2026, 3, 30) },
+            { name: "Payday",  date: new Date(2026, 4, 29) },
+            { name: "Payday",  date: new Date(2026, 5, 30) },
+            { name: "Payday",  date: new Date(2026, 6, 31) },
+            { name: "Payday",  date: new Date(2026, 7, 31) },
+            { name: "Payday",  date: new Date(2026, 8, 30) },
+            { name: "Payday",  date: new Date(2026, 9, 30) },
+            { name: "Payday",  date: new Date(2026, 10, 30)},
+            { name: "Payday",  date: new Date(2026, 11, 24)},
+            { name: "FDM Induction Day",      date: new Date(2026, 0, 5)  },
+            { name: "Q1 Performance Review",  date: new Date(2026, 2, 31) },
+            { name: "FDM Annual Conference",  date: new Date(2026, 3, 22) },
+            { name: "Q2 Performance Review",  date: new Date(2026, 5, 30) },
+            { name: "Summer Social",          date: new Date(2026, 6, 17) },
+            { name: "Q3 Performance Review",  date: new Date(2026, 8, 29) },
+            { name: "FDM Awards Evening",     date: new Date(2026, 10, 20)},
+            { name: "Q4 Performance Review",  date: new Date(2026, 11, 11)},
+            { name: "Christmas Party",        date: new Date(2026, 11, 18)},
+        ];
+
+        const MONTHS = ["January","February","March","April","May","June",
+                        "July","August","September","October","November","December"];
+        let viewYear = new Date().getFullYear();
+        let viewMonth = new Date().getMonth();
+
+        function renderCalendar() {
+            document.getElementById('calMonthName').textContent = MONTHS[viewMonth];
+            document.getElementById('calYear').textContent = viewYear;
+            const grid = document.getElementById('calGrid');
+            grid.innerHTML = '';
+            let startDow = new Date(viewYear, viewMonth, 1).getDay();
+            startDow = startDow === 0 ? 6 : startDow - 1;
+            const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+            const daysInPrev  = new Date(viewYear, viewMonth, 0).getDate();
+            const today = new Date();
+            const eventDates = EVENTS.map(e => e.date.toDateString());
+
+            for (let i = startDow - 1; i >= 0; i--) {
+                const d = document.createElement('div');
+                d.className = 'cal-day other-month';
+                d.textContent = daysInPrev - i;
+                grid.appendChild(d);
+            }
+            for (let day = 1; day <= daysInMonth; day++) {
+                const d = document.createElement('div');
+                const thisDate = new Date(viewYear, viewMonth, day);
+                const isToday   = thisDate.toDateString() === today.toDateString();
+                const isEvent   = eventDates.includes(thisDate.toDateString());
+                const isWeekend = thisDate.getDay() === 0 || thisDate.getDay() === 6;
+                d.className = 'cal-day';
+                if (isToday)        d.classList.add('today');
+                else if (isEvent)   d.classList.add('event-day');
+                else if (isWeekend) d.classList.add('weekend');
+                else                d.classList.add('normal');
+                if (isEvent) d.classList.add('has-event');
+                d.textContent = day;
+                grid.appendChild(d);
+            }
+            const total = startDow + daysInMonth;
+            const rem = total % 7 === 0 ? 0 : 7 - (total % 7);
+            for (let i = 1; i <= rem; i++) {
+                const d = document.createElement('div');
+                d.className = 'cal-day other-month';
+                d.textContent = i;
+                grid.appendChild(d);
+            }
+
+            const list = document.getElementById('calEventsList');
+            list.innerHTML = '';
+            const monthEvents = EVENTS.filter(e => e.date.getMonth() === viewMonth && e.date.getFullYear() === viewYear);
+            if (monthEvents.length === 0) {
+                list.innerHTML = '<p style="font-size:0.78rem;color:#555;margin:0;">No events this month.</p>';
+            } else {
+                monthEvents.forEach(e => {
+                    list.innerHTML += `<div class="cal-event-item">
+                        <div class="cal-event-dot"></div>
+                        <span class="cal-event-name">${e.name}</span>
+                        <span class="cal-event-date">${e.date.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span>
+                    </div>`;
+                });
+            }
+        }
+
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+            renderCalendar();
+        });
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+            renderCalendar();
+        });
+
+        document.getElementById('calendarModal').addEventListener('show.bs.modal', renderCalendar);
+        renderCalendar();
+    </script>
+
+</body>
+</html>

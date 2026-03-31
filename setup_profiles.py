@@ -52,11 +52,3 @@ profile, created = EmployeeProfile.objects.get_or_create(
 )
 
 print("TEST DATA CREATED\n")
-print(f"Admin: {admin.email} / Admin123!")
-print(f"Employee: {employee.email} / Employee123!")
-print(f"\nEmployee Profile:")
-print(f"  Job Role: {profile.job_role}")
-print(f"  Department: {profile.department}")
-print(f"  Line Manager: {profile.line_manager.email if profile.line_manager else 'None'}")
-print("\nRestart server and test at:")
-print("  http://127.0.0.1:8000/api/profiles/me/")

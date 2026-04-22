@@ -443,9 +443,7 @@
         <hr class="welcome-divider">
     </div>
 
-    <!-- admin bar - to be connected to Django backend by backend team -->
-    <!-- backend team: only show this when user.is_staff is true -->
-    <div class="admin-bar" id="adminBar">
+    <div class="admin-bar" id="adminBar" style="display:none;">
         <i class="fas fa-shield-alt" style="color:#c8fd14; margin-right:8px;"></i>
         <span style="color:#9ca3af;">
             <strong style="color:#f0f0f0;">Admin view</strong> — you can upload and remove portal content
@@ -930,6 +928,39 @@
     document.getElementById('uploadModal').addEventListener('click', function(e) {
         if (e.target === this) closeUploadModal();
     });
+
+    // --- AUTH & USER INIT ---
+    function getCookie(name) {
+        let val = null;
+        document.cookie.split(';').forEach(c => {
+            const t = c.trim();
+            if (t.startsWith(name + '=')) val = decodeURIComponent(t.slice(name.length + 1));
+        });
+        return val;
+    }
+
+    async function initUser() {
+        try {
+            const res = await fetch('/api/auth/me/', { credentials: 'include' });
+            if (!res.ok) { window.location.href = '/'; return; }
+            const user = await res.json();
+
+            // update navbar
+            const initials = ((user.first_name[0] || '') + (user.last_name[0] || '')).toUpperCase() || user.email[0].toUpperCase();
+            document.getElementById('navAvatar').textContent = initials;
+            document.getElementById('navWelcomeName').textContent = 'Welcome, ' + (user.first_name || user.email);
+
+            // show admin features
+            if (user.is_staff) {
+                document.getElementById('adminBar').style.display = 'flex';
+                document.querySelectorAll('.remove-btn').forEach(btn => btn.style.display = 'inline-flex');
+            }
+        } catch {
+            window.location.href = '/';
+        }
+    }
+
+    initUser();
 </script>
 
 </body>

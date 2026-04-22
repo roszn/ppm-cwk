@@ -544,6 +544,19 @@
             document.getElementById('displayDepartment').textContent = profile.department || '—';
             document.getElementById('editDepartment').value = profile.department || '';
 
+            if (profile.description) {
+                document.getElementById('displayDescription').textContent = profile.description;
+                document.getElementById('displayDescription').classList.remove('empty');
+            }
+            document.getElementById('editDescription').value = profile.description || '';
+
+            if (profile.about_me) {
+                document.getElementById('displayAboutMe').textContent = profile.about_me;
+                document.getElementById('displayAboutMe').classList.remove('empty');
+                document.getElementById('displayAbout').textContent = profile.about_me;
+            }
+            document.getElementById('editAboutMe').value = profile.about_me || '';
+
             // populate private fields — always visible on own profile
             document.getElementById('privateCard').classList.add('admin-view');
             document.getElementById('displayLineManager').textContent = profile.line_manager_name || '—';

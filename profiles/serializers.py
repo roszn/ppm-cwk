@@ -4,10 +4,10 @@ from accounts.serializers import UserSerializer
 
 class PublicProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
-    
+
     class Meta:
         model = EmployeeProfile
-        fields = ['id', 'user', 'profile_picture', 'job_role', 'department']
+        fields = ['id', 'user', 'profile_picture', 'job_role', 'department', 'description', 'about_me']
 
 class PrivateProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
@@ -16,9 +16,9 @@ class PrivateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeProfile
         fields = [
-            'id', 'user', 'profile_picture', 'job_role', 'department',
+            'id', 'user', 'profile_picture', 'job_role', 'department', 'description', 'about_me',
             'line_manager', 'line_manager_name', 'phone_number', 'address',
-            'date_of_birth', 'emergency_contact_name', 'emergency_contact_phone'
+            'date_of_birth', 'emergency_contact_name', 'emergency_contact_phone', 'salary'
         ]
     
     def get_line_manager_name(self, obj):
@@ -30,7 +30,7 @@ class PrivateProfileSerializer(serializers.ModelSerializer):
 class UpdatePublicProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeProfile
-        fields = ['profile_picture', 'job_role', 'department']
+        fields = ['profile_picture', 'job_role', 'department', 'description', 'about_me']
 
     def validate_profile_picture(self, image):
         max_size_mb = 5

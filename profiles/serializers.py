@@ -23,10 +23,23 @@ class PrivateProfileSerializer(serializers.ModelSerializer):
     
     def get_line_manager_name(self, obj):
         if obj.line_manager:
-            return f"{obj.line_manager.first_name} {obj.line_manager.last_name}"
+            name = f"{obj.line_manager.first_name} {obj.line_manager.last_name}".strip()
+            return name or obj.line_manager.email
         return None
 
 class UpdatePublicProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeProfile
         fields = ['profile_picture', 'job_role', 'department']
+
+    def validate_profile_picture(self, image):
+        max_size_mb = 5
+        allowed_types = {'image/jpeg', 'image/png', 'image/webp'}
+
+        if image.size > max_size_mb * 1024 * 1024:
+            raise serializers.ValidationError(f"Image must be under {max_size_mb}MB.")
+
+        if image.content_type not in allowed_types:
+            raise serializers.ValidationError("Only JPEG, PNG, and WebP images are allowed.")
+
+        return image

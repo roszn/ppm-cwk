@@ -2,9 +2,16 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from .models import EmployeeProfile
 from .serializers import PublicProfileSerializer, PrivateProfileSerializer, UpdatePublicProfileSerializer
 from accounts.models import CustomUser
+
+
+class ProfilePagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 class MyProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -41,8 +48,10 @@ class UserProfileView(APIView):
 
 class AllProfilesView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request):
         profiles = EmployeeProfile.objects.all()
-        serializer = PublicProfileSerializer(profiles, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        paginator = ProfilePagination()
+        page = paginator.paginate_queryset(profiles, request)
+        serializer = PublicProfileSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)

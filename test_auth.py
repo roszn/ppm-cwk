@@ -8,40 +8,40 @@ from accounts.models import CustomUser
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
+staff_email = os.environ.get('STAFF_EMAIL', 'staff@fdm.com')
+staff_password = os.environ.get('STAFF_PASSWORD', 'Staff123!')
+admin_email = os.environ.get('ADMIN_EMAIL', 'admin@fdm.com')
+admin_password = os.environ.get('ADMIN_PASSWORD', 'Admin123!')
+
 print("=" * 50)
 print("AUTHENTICATION SYSTEM TEST")
 print("=" * 50)
 
-# Test 1: Create test users
 print("\n1. Creating test users...")
 try:
-    # Delete existing test users if they exist
-    CustomUser.objects.filter(email__in=['staff@fdm.com', 'admin@fdm.com']).delete()
-    
-    # Create staff user
+    CustomUser.objects.filter(email__in=[staff_email, admin_email]).delete()
+
     staff = CustomUser.objects.create_user(
         username='staff1',
-        email='staff@fdm.com',
-        password='Staff123!',
+        email=staff_email,
+        password=staff_password,
         first_name='Jane',
         last_name='Smith'
     )
     print(f"✓ Created internal staff: {staff.email}")
-    
-    # Create admin user
+
     admin = CustomUser.objects.create_superuser(
         username='admin',
-        email='admin@fdm.com',
-        password='Admin123!',
+        email=admin_email,
+        password=admin_password,
         first_name='Admin',
         last_name='User'
     )
     print(f"✓ Created admin: {admin.email}")
-    
+
 except Exception as e:
     print(f"✗ Error creating users: {e}")
 
-# Test 2: Password policy validation
 print("\n2. Testing password policy...")
 weak_passwords = [
     ('short', 'Too short'),
@@ -60,17 +60,15 @@ for pwd, reason in weak_passwords:
 
 try:
     validate_password('ValidPass123!')
-    print(f"✓ Strong password: 'ValidPass123!' correctly accepted")
+    print("✓ Strong password: 'ValidPass123!' correctly accepted")
 except ValidationError as e:
     print(f"✗ Strong password rejected: {e}")
 
-# Test 3: Account locking mechanism
 print("\n3. Testing account locking...")
-test_user = CustomUser.objects.get(email='staff@fdm.com')
+test_user = CustomUser.objects.get(email=staff_email)
 print(f"Initial failed attempts: {test_user.failed_login_attempts}")
 print(f"Account locked: {test_user.is_locked}")
 
-# Simulate failed login attempts
 test_user.failed_login_attempts = 2
 test_user.save()
 print(f"After 2 failed attempts: {test_user.failed_login_attempts}")
@@ -80,18 +78,17 @@ test_user.is_locked = True
 test_user.save()
 print(f"After 3 failed attempts - Locked: {test_user.is_locked}")
 
-# Reset for testing
 test_user.failed_login_attempts = 0
 test_user.is_locked = False
 test_user.save()
-print(f"✓ Account reset for API testing")
+print("✓ Account reset for API testing")
 
 print("\n" + "=" * 50)
 print("TEST USERS CREATED - Ready for API testing!")
 print("=" * 50)
-print("\nTest Credentials:")
-print("1. Staff: staff@fdm.com / Staff123!")
-print("2. Admin: admin@fdm.com / Admin123!")
+print(f"\nTest Credentials:")
+print(f"1. Staff: {staff_email}")
+print(f"2. Admin: {admin_email}")
 print("\nStart the server with: python manage.py runserver")
 print("Then test the endpoints:")
 print("  POST http://localhost:8000/api/auth/login/")

@@ -8,9 +8,13 @@ from accounts.models import CustomUser
 from profiles.models import EmployeeProfile
 from datetime import date
 
-# Get or create admin
+admin_email = os.environ.get('ADMIN_EMAIL', 'admin@fdm.com')
+admin_password = os.environ.get('ADMIN_PASSWORD', 'Admin123!')
+employee_email = os.environ.get('EMPLOYEE_EMAIL', 'john.smith@fdm.com')
+employee_password = os.environ.get('EMPLOYEE_PASSWORD', 'Employee123!')
+
 admin, created = CustomUser.objects.get_or_create(
-    email='admin@fdm.com',
+    email=admin_email,
     defaults={
         'username': 'admin',
         'first_name': 'Admin',
@@ -20,12 +24,11 @@ admin, created = CustomUser.objects.get_or_create(
     }
 )
 if created:
-    admin.set_password('Admin123!')
+    admin.set_password(admin_password)
     admin.save()
 
-# Get or create employee
 employee, created = CustomUser.objects.get_or_create(
-    email='john.smith@fdm.com',
+    email=employee_email,
     defaults={
         'username': 'jsmith',
         'first_name': 'John',
@@ -33,22 +36,18 @@ employee, created = CustomUser.objects.get_or_create(
     }
 )
 if created:
-    employee.set_password('Employee123!')
+    employee.set_password(employee_password)
     employee.save()
 
-# Create profile for employee
-profile, created = EmployeeProfile.objects.get_or_create(
-    user=employee,
-    defaults={
-        'job_role': 'Software Developer',
-        'department': 'IT',
-        'line_manager': admin,
-        'phone_number': '07123456789',
-        'address': '123 Main Street, London',
-        'date_of_birth': date(1995, 5, 15),
-        'emergency_contact_name': 'Jane Smith',
-        'emergency_contact_phone': '07987654321'
-    }
+EmployeeProfile.objects.filter(user=employee).update(
+    job_role='Software Developer',
+    department='IT',
+    line_manager=admin,
+    phone_number='07123456789',
+    address='123 Main Street, London',
+    date_of_birth=date(1995, 5, 15),
+    emergency_contact_name='Jane Smith',
+    emergency_contact_phone='07987654321'
 )
 
 print("TEST DATA CREATED\n")

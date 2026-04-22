@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from .models import EmployeeProfile
-from .serializers import PublicProfileSerializer, PrivateProfileSerializer, UpdatePublicProfileSerializer
+from .serializers import PublicProfileSerializer, PrivateProfileSerializer, UpdatePublicProfileSerializer, AdminUpdateProfileSerializer
 from accounts.models import CustomUser
 
 
@@ -22,12 +22,20 @@ class MyProfileView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def patch(self, request):
-        profile, created = EmployeeProfile.objects.get_or_create(user=request.user)
-        serializer = UpdatePublicProfileSerializer(profile, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(PrivateProfileSerializer(profile).data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        profile, _ = EmployeeProfile.objects.get_or_create(user=request.user)
+
+        public_serializer = UpdatePublicProfileSerializer(profile, data=request.data, partial=True)
+        if not public_serializer.is_valid():
+            return Response(public_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        public_serializer.save()
+
+        if request.user.is_staff:
+            private_serializer = AdminUpdateProfileSerializer(profile, data=request.data, partial=True)
+            if not private_serializer.is_valid():
+                return Response(private_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            private_serializer.save()
+
+        return Response(PrivateProfileSerializer(profile).data, status=status.HTTP_200_OK)
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]

@@ -43,3 +43,12 @@ class UpdatePublicProfileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Only JPEG, PNG, and WebP images are allowed.")
 
         return image
+
+
+class AdminUpdateProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmployeeProfile
+        fields = [
+            'line_manager', 'salary', 'phone_number', 'address',
+            'date_of_birth', 'emergency_contact_name', 'emergency_contact_phone'
+        ]

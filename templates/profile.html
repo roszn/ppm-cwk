@@ -573,11 +573,17 @@
                 document.getElementById('avatarCircle').innerHTML = '<img src="' + profile.profile_picture + '" alt="Profile picture">';
             }
 
+            // populate salary (private — always shown on own profile)
+            if (profile.salary) {
+                document.getElementById('salaryActual').textContent = '£' + parseFloat(profile.salary).toLocaleString('en-GB', {minimumFractionDigits: 2});
+            }
+
             // allow staff to edit private fields too
             if (currentUser.is_staff) {
                 document.getElementById('editPhone').value = profile.phone_number || '';
                 document.getElementById('editAddress').value = profile.address || '';
                 document.getElementById('editDob').value = profile.date_of_birth || '';
+                document.getElementById('editSalary').value = profile.salary || '';
             }
 
         } catch {
@@ -627,6 +633,8 @@
             const formData = new FormData();
             formData.append('job_role', document.getElementById('editJobRole').value);
             formData.append('department', document.getElementById('editDepartment').value);
+            formData.append('description', document.getElementById('editDescription').value);
+            formData.append('about_me', document.getElementById('editAboutMe').value);
 
             if (pendingPictureFile) {
                 formData.append('profile_picture', pendingPictureFile);
@@ -648,6 +656,16 @@
                 document.getElementById('displayJobRole').textContent = newJobRole || '—';
                 document.getElementById('displayDepartment').textContent = newDept || '—';
                 document.getElementById('displayRole').textContent = newJobRole + (newDept ? ' — ' + newDept : '');
+
+                const newDesc = updated.description || '';
+                document.getElementById('displayDescription').textContent = newDesc || '—';
+
+                const newAbout = updated.about_me || '';
+                if (newAbout) {
+                    document.getElementById('displayAboutMe').textContent = newAbout;
+                    document.getElementById('displayAboutMe').classList.remove('empty');
+                    document.getElementById('displayAbout').textContent = newAbout;
+                }
 
                 if (updated.profile_picture) {
                     document.getElementById('avatarCircle').innerHTML = '<img src="' + updated.profile_picture + '" alt="Profile picture">';

@@ -544,31 +544,34 @@
 </div>
 
 <!-- upload modal - admin only -->
-<!-- to be connected to Django backend by backend team -->
 <div class="upload-modal" id="uploadModal">
     <div class="modal-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
             <h5 style="margin:0; font-weight:bold;">Upload Content</h5>
-            <button onclick="closeUploadModal()"
-                style="background:none; border:none; color:#666; cursor:pointer; font-size:1.1rem;">
+            <button onclick="closeUploadModal()" style="background:none; border:none; color:#666; cursor:pointer; font-size:1.1rem;">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <input class="modal-input" type="text" placeholder="Title">
-        <textarea class="modal-input" placeholder="Description" rows="3" style="resize:none;"></textarea>
-        <select class="modal-input">
+        <input class="modal-input" id="modalTitle" type="text" placeholder="Title">
+        <textarea class="modal-input" id="modalBody" placeholder="Description" rows="3" style="resize:none;"></textarea>
+        <select class="modal-input" id="modalType">
             <option value="">Select content type...</option>
             <option value="news">News</option>
             <option value="file">File</option>
             <option value="policy">Policy</option>
             <option value="update">Update</option>
         </select>
-        <div style="border:2px dashed #3a3a3a; border-radius:8px; padding:1.5rem;
-            text-align:center; color:#555; font-size:0.825rem; margin-bottom:10px;">
+        <label style="display:flex; align-items:center; gap:8px; color:#9ca3af; font-size:0.85rem; margin-bottom:10px; cursor:pointer;">
+            <input type="checkbox" id="modalPinned" style="accent-color:#c8fd14;"> Pin to top as announcement
+        </label>
+        <label style="display:block; border:2px dashed #3a3a3a; border-radius:8px; padding:1.5rem;
+            text-align:center; color:#555; font-size:0.825rem; margin-bottom:10px; cursor:pointer;">
             <i class="fas fa-cloud-upload-alt" style="font-size:1.5rem; display:block; margin-bottom:6px;"></i>
-            Drag and drop a file here, or click to browse
-        </div>
-        <button style="background:#c8fd14; border:none; border-radius:8px; padding:10px;
+            <span id="fileLabel">Attach a file (optional) — click to browse</span>
+            <input type="file" id="modalFile" style="display:none;" onchange="document.getElementById('fileLabel').textContent = this.files[0]?.name || 'Attach a file (optional)'">
+        </label>
+        <div id="modalError" style="color:#f87171; font-size:0.8rem; margin-bottom:8px; display:none;"></div>
+        <button id="modalUploadBtn" onclick="uploadContent()" style="background:#c8fd14; border:none; border-radius:8px; padding:10px;
             width:100%; color:#1e1e1e; font-weight:bold; font-size:0.875rem; cursor:pointer;">
             Upload
         </button>
@@ -578,134 +581,10 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // storing reaction state so I can toggle on and off
     var reactionState = {};
+    var currentUser = null;
+    var activeFilter = 'all';
 
-    // handles heart and circle-x clicks - instagram/facebook style
-    function react(btn, type, id) {
-        var key = id + '_' + type;
-        var oppositeType = type === 'like' ? 'dislike' : 'like';
-        var oppositeKey = id + '_' + oppositeType;
-        var countSpan = btn.querySelector('.react-count');
-
-        // find the opposite button in the same parent group
-        var parent = btn.parentElement;
-        var buttons = parent.querySelectorAll('.react-btn');
-        var oppositeBtn = null;
-        for (var i = 0; i < buttons.length; i++) {
-            if (buttons[i] !== btn) oppositeBtn = buttons[i];
-        }
-
-        if (reactionState[key]) {
-            // already active so untoggle it
-            reactionState[key] = false;
-            btn.classList.remove('liked', 'disliked');
-            countSpan.textContent = parseInt(countSpan.textContent) - 1;
-        } else {
-            // not active so turn it on
-            reactionState[key] = true;
-            btn.classList.add(type === 'like' ? 'liked' : 'disliked');
-            countSpan.textContent = parseInt(countSpan.textContent) + 1;
-
-            // untoggle the opposite if it was active
-            if (reactionState[oppositeKey] && oppositeBtn) {
-                reactionState[oppositeKey] = false;
-                oppositeBtn.classList.remove('liked', 'disliked');
-                var oppSpan = oppositeBtn.querySelector('.react-count');
-                oppSpan.textContent = parseInt(oppSpan.textContent) - 1;
-            }
-        }
-    }
-
-    // filters cards and changes button colour to match the stripe
-    function filterCards(btn, type) {
-        // remove all active classes first
-        var filterBtns = document.querySelectorAll('.filter-btn');
-        for (var i = 0; i < filterBtns.length; i++) {
-            filterBtns[i].className = 'filter-btn';
-        }
-
-        // apply the matching active class
-        if (type === 'all')    btn.classList.add('active-all');
-        if (type === 'news')   btn.classList.add('active-news');
-        if (type === 'file')   btn.classList.add('active-file');
-        if (type === 'policy') btn.classList.add('active-policy');
-        if (type === 'update') btn.classList.add('active-update');
-
-        // show or hide cards
-        var wrappers = document.querySelectorAll('.card-wrapper');
-        var visible = 0;
-        for (var i = 0; i < wrappers.length; i++) {
-            if (type === 'all' || wrappers[i].dataset.type === type) {
-                wrappers[i].style.display = '';
-                visible++;
-            } else {
-                wrappers[i].style.display = 'none';
-            }
-        }
-        document.getElementById('visibleCount').textContent = visible + ' items';
-        checkNoResults(visible);
-    }
-
-    // filters cards as the user types
-    function searchCards(query) {
-        var q = query.toLowerCase();
-        var wrappers = document.querySelectorAll('.card-wrapper');
-        var visible = 0;
-        for (var i = 0; i < wrappers.length; i++) {
-            var cardText = wrappers[i].textContent.toLowerCase();
-            if (!q || cardText.includes(q)) {
-                wrappers[i].style.display = '';
-                visible++;
-            } else {
-                wrappers[i].style.display = 'none';
-            }
-        }
-        document.getElementById('visibleCount').textContent = visible + ' items';
-        checkNoResults(visible);
-    }
-
-    function checkNoResults(count) {
-        document.getElementById('noResults').style.display = count === 0 ? 'block' : 'none';
-    }
-
-    // removes a card when admin clicks trash icon
-    // actual deletion from database to be handled by backend team
-    function removeCard(btn) {
-        var wrapper = btn.closest('.card-wrapper');
-        if (confirm('Are you sure you want to remove this post?')) {
-            wrapper.style.display = 'none';
-            var visible = document.querySelectorAll('.card-wrapper:not([style*="none"])').length;
-            document.getElementById('visibleCount').textContent = visible + ' items';
-        }
-    }
-
-    // shows loading animation when a file is downloaded
-    function handleDownload(e, filename) {
-        e.preventDefault();
-        var btn = e.currentTarget;
-        var original = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
-        setTimeout(function() {
-            btn.innerHTML = '<i class="fas fa-check"></i> Done';
-            setTimeout(function() { btn.innerHTML = original; }, 2000);
-        }, 800);
-    }
-
-    function showUploadModal() {
-        document.getElementById('uploadModal').style.display = 'flex';
-    }
-
-    function closeUploadModal() {
-        document.getElementById('uploadModal').style.display = 'none';
-    }
-
-    // close modal when clicking outside of it
-    document.getElementById('uploadModal').addEventListener('click', function(e) {
-        if (e.target === this) closeUploadModal();
-    });
-
-    // --- AUTH & USER INIT ---
     function getCookie(name) {
         let val = null;
         document.cookie.split(';').forEach(c => {
@@ -715,22 +594,247 @@
         return val;
     }
 
+    function escapeHtml(str) {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // --- RENDER A SINGLE CARD ---
+    function renderCard(item) {
+        const typeClass = { news:'card-news', file:'card-file', policy:'card-policy', update:'card-update' }[item.content_type] || 'card-news';
+        const typeLabel = item.content_type.charAt(0).toUpperCase() + item.content_type.slice(1);
+        const date = new Date(item.created_at).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+        const postedBy = item.uploaded_by_name ? ' by ' + item.uploaded_by_name : '';
+
+        const removeBtn = currentUser && currentUser.is_staff
+            ? `<button class="remove-btn" onclick="removeCard(this, ${item.id})" title="Remove post" style="display:inline-flex;">
+                   <i class="fas fa-trash-alt"></i>
+               </button>`
+            : '';
+
+        const downloadBtn = item.file
+            ? `<a href="${item.file}" class="download-btn" download>
+                   <i class="fas fa-download" style="margin-right:4px;"></i>Download
+               </a>`
+            : '';
+
+        return `
+            <div class="col-12 col-md-6 card-wrapper" data-type="${item.content_type}" data-id="${item.id}">
+                <div class="content-card ${typeClass}">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                        <span class="type-label">${typeLabel}</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="date-text">${date}${postedBy}</span>
+                            ${removeBtn}
+                        </div>
+                    </div>
+                    <h5 style="font-weight:bold; margin-bottom:0.4rem;">${escapeHtml(item.title)}</h5>
+                    <p style="color:#9ca3af; font-size:0.85rem; line-height:1.6;">${escapeHtml(item.body)}</p>
+                    <div class="card-footer-row">
+                        ${downloadBtn}
+                        <div class="reaction-group">
+                            <button class="react-btn" onclick="react(this, 'like', '${item.id}')">
+                                <i class="heart-icon"></i>
+                                <span class="react-count">0</span>
+                            </button>
+                            <button class="react-btn" onclick="react(this, 'dislike', '${item.id}')">
+                                <i class="fa-regular fa-circle-xmark"></i>
+                                <span class="react-count">0</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    // --- LOAD CONTENT FROM API ---
+    async function loadContent() {
+        try {
+            const res = await fetch('/api/content/', { credentials: 'include' });
+            if (!res.ok) return;
+            const items = await res.json();
+
+            // pinned card
+            const pinned = items.find(i => i.is_pinned);
+            if (pinned) {
+                const date = new Date(pinned.created_at).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+                document.getElementById('pinnedTitle').textContent = pinned.title;
+                document.getElementById('pinnedBody').textContent = pinned.body;
+                document.getElementById('pinnedType').textContent = pinned.content_type.charAt(0).toUpperCase() + pinned.content_type.slice(1);
+                document.getElementById('pinnedMeta').textContent = 'Posted ' + date + (pinned.uploaded_by_name ? ' by ' + pinned.uploaded_by_name : '');
+                document.getElementById('pinnedCard').style.display = 'block';
+            }
+
+            // regular cards (exclude pinned)
+            const regular = items.filter(i => !i.is_pinned);
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = regular.map(renderCard).join('');
+
+            updateCount();
+        } catch (e) {
+            console.error('Failed to load content', e);
+        }
+    }
+
+    // --- REACTIONS ---
+    function react(btn, type, id) {
+        const key = id + '_' + type;
+        const oppositeKey = id + '_' + (type === 'like' ? 'dislike' : 'like');
+        const countSpan = btn.querySelector('.react-count');
+        const parent = btn.parentElement;
+        const oppositeBtn = [...parent.querySelectorAll('.react-btn')].find(b => b !== btn);
+
+        if (reactionState[key]) {
+            reactionState[key] = false;
+            btn.classList.remove('liked', 'disliked');
+            countSpan.textContent = parseInt(countSpan.textContent) - 1;
+        } else {
+            reactionState[key] = true;
+            btn.classList.add(type === 'like' ? 'liked' : 'disliked');
+            countSpan.textContent = parseInt(countSpan.textContent) + 1;
+            if (reactionState[oppositeKey] && oppositeBtn) {
+                reactionState[oppositeKey] = false;
+                oppositeBtn.classList.remove('liked', 'disliked');
+                oppositeBtn.querySelector('.react-count').textContent = parseInt(oppositeBtn.querySelector('.react-count').textContent) - 1;
+            }
+        }
+    }
+
+    // --- FILTER & SEARCH ---
+    function filterCards(btn, type) {
+        activeFilter = type;
+        document.querySelectorAll('.filter-btn').forEach(b => b.className = 'filter-btn');
+        btn.classList.add('active-' + type);
+        applyFilter();
+    }
+
+    function searchCards(query) {
+        const q = query.toLowerCase();
+        document.querySelectorAll('.card-wrapper').forEach(w => {
+            const matchesText = !q || w.textContent.toLowerCase().includes(q);
+            const matchesFilter = activeFilter === 'all' || w.dataset.type === activeFilter;
+            w.style.display = matchesText && matchesFilter ? '' : 'none';
+        });
+        updateCount();
+    }
+
+    function applyFilter() {
+        document.querySelectorAll('.card-wrapper').forEach(w => {
+            w.style.display = (activeFilter === 'all' || w.dataset.type === activeFilter) ? '' : 'none';
+        });
+        updateCount();
+    }
+
+    function updateCount() {
+        const visible = document.querySelectorAll('.card-wrapper:not([style*="none"])').length;
+        document.getElementById('visibleCount').textContent = visible + ' items';
+        document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+    }
+
+    // --- REMOVE CARD ---
+    async function removeCard(btn, id) {
+        if (!confirm('Remove this post permanently?')) return;
+        try {
+            const res = await fetch('/api/content/' + id + '/', {
+                method: 'DELETE',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                credentials: 'include',
+            });
+            if (res.ok) {
+                btn.closest('.card-wrapper').remove();
+                updateCount();
+            }
+        } catch (e) {
+            alert('Failed to remove post.');
+        }
+    }
+
+    // --- UPLOAD CONTENT ---
+    function showUploadModal() {
+        document.getElementById('uploadModal').style.display = 'flex';
+    }
+
+    function closeUploadModal() {
+        document.getElementById('uploadModal').style.display = 'none';
+        document.getElementById('modalTitle').value = '';
+        document.getElementById('modalBody').value = '';
+        document.getElementById('modalType').value = '';
+        document.getElementById('modalPinned').checked = false;
+        document.getElementById('modalFile').value = '';
+        document.getElementById('fileLabel').textContent = 'Attach a file (optional) — click to browse';
+        document.getElementById('modalError').style.display = 'none';
+    }
+
+    async function uploadContent() {
+        const title = document.getElementById('modalTitle').value.trim();
+        const body = document.getElementById('modalBody').value.trim();
+        const type = document.getElementById('modalType').value;
+        const pinned = document.getElementById('modalPinned').checked;
+        const file = document.getElementById('modalFile').files[0];
+        const errorDiv = document.getElementById('modalError');
+        const uploadBtn = document.getElementById('modalUploadBtn');
+
+        if (!title || !type) {
+            errorDiv.textContent = 'Title and content type are required.';
+            errorDiv.style.display = 'block';
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('body', body);
+        formData.append('content_type', type);
+        formData.append('is_pinned', pinned);
+        if (file) formData.append('file', file);
+
+        uploadBtn.textContent = 'Uploading…';
+        uploadBtn.disabled = true;
+        errorDiv.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/content/', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                credentials: 'include',
+                body: formData,
+            });
+
+            if (res.ok) {
+                closeUploadModal();
+                await loadContent();
+            } else {
+                const err = await res.json();
+                errorDiv.textContent = JSON.stringify(err);
+                errorDiv.style.display = 'block';
+            }
+        } catch {
+            errorDiv.textContent = 'Connection error. Please try again.';
+            errorDiv.style.display = 'block';
+        } finally {
+            uploadBtn.textContent = 'Upload';
+            uploadBtn.disabled = false;
+        }
+    }
+
+    document.getElementById('uploadModal').addEventListener('click', function(e) {
+        if (e.target === this) closeUploadModal();
+    });
+
+    // --- INIT ---
     async function initUser() {
         try {
             const res = await fetch('/api/auth/me/', { credentials: 'include' });
             if (!res.ok) { window.location.href = '/'; return; }
-            const user = await res.json();
+            currentUser = await res.json();
 
-            // update navbar
-            const initials = ((user.first_name[0] || '') + (user.last_name[0] || '')).toUpperCase() || user.email[0].toUpperCase();
+            const initials = ((currentUser.first_name[0] || '') + (currentUser.last_name[0] || '')).toUpperCase() || currentUser.email[0].toUpperCase();
             document.getElementById('navAvatar').textContent = initials;
-            document.getElementById('navWelcomeName').textContent = 'Welcome, ' + (user.first_name || user.email);
+            document.getElementById('navWelcomeName').textContent = 'Welcome, ' + (currentUser.first_name || currentUser.email);
 
-            // show admin features
-            if (user.is_staff) {
+            if (currentUser.is_staff) {
                 document.getElementById('adminBar').style.display = 'flex';
-                document.querySelectorAll('.remove-btn').forEach(btn => btn.style.display = 'inline-flex');
             }
+
+            await loadContent();
         } catch {
             window.location.href = '/';
         }

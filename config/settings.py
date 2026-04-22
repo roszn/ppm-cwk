@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'accounts',
     'profiles',
     'content',
+    'holiday',
+    'support',
 ]
 
 MIDDLEWARE = [

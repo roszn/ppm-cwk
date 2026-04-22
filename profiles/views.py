@@ -28,15 +28,15 @@ class UserProfileView(APIView):
     def get(self, request, user_id):
         try:
             user = CustomUser.objects.get(id=user_id)
-            profile, created = EmployeeProfile.objects.get_or_create(user=user)
-            
+            profile = EmployeeProfile.objects.get(user=user)
+
             if request.user.id == user_id or request.user.is_staff:
                 serializer = PrivateProfileSerializer(profile)
             else:
                 serializer = PublicProfileSerializer(profile)
             
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except CustomUser.DoesNotExist:
+        except (CustomUser.DoesNotExist, EmployeeProfile.DoesNotExist):
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 class AllProfilesView(APIView):

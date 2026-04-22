@@ -54,6 +54,21 @@ class UserProfileView(APIView):
         except (CustomUser.DoesNotExist, EmployeeProfile.DoesNotExist):
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
+    def patch(self, request, user_id):
+        if not request.user.is_staff:
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+        try:
+            user = CustomUser.objects.get(id=user_id)
+            profile = EmployeeProfile.objects.get(user=user)
+            serializer = AdminUpdateProfileSerializer(profile, data=request.data, partial=True)
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer.save()
+            return Response(PrivateProfileSerializer(profile).data, status=status.HTTP_200_OK)
+        except (CustomUser.DoesNotExist, EmployeeProfile.DoesNotExist):
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
 class AllProfilesView(APIView):
     permission_classes = [IsAuthenticated]
 

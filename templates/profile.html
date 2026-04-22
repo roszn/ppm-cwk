@@ -614,6 +614,8 @@
         if (currentUser && currentUser.is_staff) {
             document.getElementById('editLineManager').style.display = 'block';
             document.getElementById('displayLineManager').style.display = 'none';
+            document.getElementById('editSalary').style.display = 'block';
+            document.getElementById('displaySalary').style.display = 'none';
             document.getElementById('editPhone').style.display = 'block';
             document.getElementById('displayPhone').style.display = 'none';
             document.getElementById('editAddress').style.display = 'block';
@@ -640,6 +642,14 @@
                 formData.append('profile_picture', pendingPictureFile);
             }
 
+            // staff also send private fields in the same request
+            if (currentUser && currentUser.is_staff) {
+                formData.append('salary', document.getElementById('editSalary').value);
+                formData.append('phone_number', document.getElementById('editPhone').value);
+                formData.append('address', document.getElementById('editAddress').value);
+                formData.append('date_of_birth', document.getElementById('editDob').value);
+            }
+
             const res = await fetch('/api/profiles/me/', {
                 method: 'PATCH',
                 headers: { 'X-CSRFToken': getCookie('csrftoken') },
@@ -650,7 +660,7 @@
             if (res.ok) {
                 const updated = await res.json();
 
-                // update display values
+                // update public display values
                 const newJobRole = updated.job_role || document.getElementById('editJobRole').value;
                 const newDept = updated.department || document.getElementById('editDepartment').value;
                 document.getElementById('displayJobRole').textContent = newJobRole || '—';
@@ -669,6 +679,16 @@
 
                 if (updated.profile_picture) {
                     document.getElementById('avatarCircle').innerHTML = '<img src="' + updated.profile_picture + '" alt="Profile picture">';
+                }
+
+                // update private display values if staff
+                if (currentUser && currentUser.is_staff) {
+                    document.getElementById('displayPhone').textContent = updated.phone_number || '—';
+                    document.getElementById('displayAddress').textContent = updated.address || '—';
+                    document.getElementById('displayDob').textContent = updated.date_of_birth || '—';
+                    if (updated.salary) {
+                        document.getElementById('salaryActual').textContent = '£' + parseFloat(updated.salary).toLocaleString('en-GB', {minimumFractionDigits: 2});
+                    }
                 }
 
                 pendingPictureFile = null;
@@ -706,6 +726,8 @@
 
         document.getElementById('editLineManager').style.display = 'none';
         document.getElementById('displayLineManager').style.display = 'block';
+        document.getElementById('editSalary').style.display = 'none';
+        document.getElementById('displaySalary').style.display = 'block';
         document.getElementById('editPhone').style.display = 'none';
         document.getElementById('displayPhone').style.display = 'block';
         document.getElementById('editAddress').style.display = 'none';

@@ -503,104 +503,184 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-
     var isEditing = false;
+    var currentUser = null;
+    var pendingPictureFile = null;
 
-    // switches the page into edit mode
+    function getCookie(name) {
+        let val = null;
+        document.cookie.split(';').forEach(c => {
+            const t = c.trim();
+            if (t.startsWith(name + '=')) val = decodeURIComponent(t.slice(name.length + 1));
+        });
+        return val;
+    }
+
+    // --- LOAD PROFILE FROM API ---
+    async function initProfile() {
+        try {
+            const userRes = await fetch('/api/auth/me/', { credentials: 'include' });
+            if (!userRes.ok) { window.location.href = '/'; return; }
+            currentUser = await userRes.json();
+
+            // update navbar
+            const initials = ((currentUser.first_name[0] || '') + (currentUser.last_name[0] || '')).toUpperCase() || currentUser.email[0].toUpperCase();
+            document.getElementById('navAvatar').textContent = initials;
+            document.getElementById('navWelcomeName').textContent = 'Welcome, ' + (currentUser.first_name || currentUser.email);
+
+            const profRes = await fetch('/api/profiles/me/', { credentials: 'include' });
+            if (!profRes.ok) return;
+            const profile = await profRes.json();
+
+            // populate header
+            const fullName = (currentUser.first_name + ' ' + currentUser.last_name).trim() || currentUser.email;
+            document.getElementById('displayName').textContent = fullName;
+            document.getElementById('editName').value = fullName;
+            document.getElementById('displayRole').textContent = (profile.job_role || 'No role set') + (profile.department ? ' — ' + profile.department : '');
+
+            // populate public fields
+            document.getElementById('displayJobRole').textContent = profile.job_role || '—';
+            document.getElementById('editJobRole').value = profile.job_role || '';
+            document.getElementById('displayDepartment').textContent = profile.department || '—';
+            document.getElementById('editDepartment').value = profile.department || '';
+
+            // populate private fields — always visible on own profile
+            document.getElementById('privateCard').classList.add('admin-view');
+            document.getElementById('displayLineManager').textContent = profile.line_manager_name || '—';
+            document.getElementById('displayPhone').textContent = profile.phone_number || '—';
+            document.getElementById('displayAddress').textContent = profile.address || '—';
+            document.getElementById('displayDob').textContent = profile.date_of_birth || '—';
+            const emergency = profile.emergency_contact_name
+                ? profile.emergency_contact_name + (profile.emergency_contact_phone ? ' — ' + profile.emergency_contact_phone : '')
+                : '—';
+            document.getElementById('displayEmergency').textContent = emergency;
+
+            // profile picture
+            if (profile.profile_picture) {
+                document.getElementById('avatarCircle').innerHTML = '<img src="' + profile.profile_picture + '" alt="Profile picture">';
+            }
+
+            // allow staff to edit private fields too
+            if (currentUser.is_staff) {
+                document.getElementById('editPhone').value = profile.phone_number || '';
+                document.getElementById('editAddress').value = profile.address || '';
+                document.getElementById('editDob').value = profile.date_of_birth || '';
+            }
+
+        } catch {
+            window.location.href = '/';
+        }
+    }
+
+    // --- EDIT MODE ---
     function startEdit() {
         isEditing = true;
 
-        // show the edit inputs and hide the display values
         document.getElementById('editName').style.display = 'block';
         document.getElementById('displayName').style.display = 'none';
-
         document.getElementById('editJobRole').style.display = 'block';
         document.getElementById('displayJobRole').style.display = 'none';
-
         document.getElementById('editDepartment').style.display = 'block';
         document.getElementById('displayDepartment').style.display = 'none';
-
         document.getElementById('editDescription').style.display = 'block';
         document.getElementById('displayDescription').style.display = 'none';
-
         document.getElementById('editAboutMe').style.display = 'block';
         document.getElementById('displayAboutMe').style.display = 'none';
 
-        // show save and cancel, hide edit button
         document.getElementById('editBtn').style.display = 'none';
         document.getElementById('saveBtn').style.display = 'block';
         document.getElementById('cancelBtn').style.display = 'block';
-
-        // show the change picture button
         document.getElementById('changePicBtn').style.display = 'block';
 
-        // if admin is editing also show private fields
-        // backend team: add a check for user.is_staff here
-        var adminEditing = false;
-        if (adminEditing) {
+        if (currentUser && currentUser.is_staff) {
             document.getElementById('editLineManager').style.display = 'block';
             document.getElementById('displayLineManager').style.display = 'none';
-            document.getElementById('editSalary').style.display = 'block';
             document.getElementById('editPhone').style.display = 'block';
+            document.getElementById('displayPhone').style.display = 'none';
             document.getElementById('editAddress').style.display = 'block';
+            document.getElementById('displayAddress').style.display = 'none';
             document.getElementById('editDob').style.display = 'block';
-            document.getElementById('editEmergency').style.display = 'block';
+            document.getElementById('displayDob').style.display = 'none';
         }
     }
 
-    // saves the changes and goes back to display mode
-    function saveProfile() {
-        // get the new values from the inputs
-        var newName = document.getElementById('editName').value;
-        var newJobRole = document.getElementById('editJobRole').value;
-        var newDepartment = document.getElementById('editDepartment').value;
-        var newDescription = document.getElementById('editDescription').value;
-        var newAboutMe = document.getElementById('editAboutMe').value;
+    // --- SAVE PROFILE TO API ---
+    async function saveProfile() {
+        const saveBtn = document.getElementById('saveBtn');
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size:0.7rem; margin-right:4px;"></i> Saving…';
 
-        // update the display values
-        document.getElementById('displayName').textContent = newName;
-        document.getElementById('displayJobRole').textContent = newJobRole;
-        document.getElementById('displayDepartment').textContent = newDepartment;
-        document.getElementById('displayDescription').textContent = newDescription;
-        document.getElementById('displayRole').textContent = newJobRole + ' — ' + newDepartment;
+        try {
+            const formData = new FormData();
+            formData.append('job_role', document.getElementById('editJobRole').value);
+            formData.append('department', document.getElementById('editDepartment').value);
 
-        if (newAboutMe) {
-            document.getElementById('displayAboutMe').textContent = newAboutMe;
-            document.getElementById('displayAboutMe').classList.remove('empty');
-            document.getElementById('displayAbout').textContent = newAboutMe;
+            if (pendingPictureFile) {
+                formData.append('profile_picture', pendingPictureFile);
+            }
+
+            const res = await fetch('/api/profiles/me/', {
+                method: 'PATCH',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                credentials: 'include',
+                body: formData,
+            });
+
+            if (res.ok) {
+                const updated = await res.json();
+
+                // update display values
+                const newJobRole = updated.job_role || document.getElementById('editJobRole').value;
+                const newDept = updated.department || document.getElementById('editDepartment').value;
+                document.getElementById('displayJobRole').textContent = newJobRole || '—';
+                document.getElementById('displayDepartment').textContent = newDept || '—';
+                document.getElementById('displayRole').textContent = newJobRole + (newDept ? ' — ' + newDept : '');
+
+                if (updated.profile_picture) {
+                    document.getElementById('avatarCircle').innerHTML = '<img src="' + updated.profile_picture + '" alt="Profile picture">';
+                }
+
+                pendingPictureFile = null;
+                cancelEdit();
+
+                const successMsg = document.getElementById('saveSuccess');
+                successMsg.style.display = 'inline';
+                setTimeout(() => { successMsg.style.display = 'none'; }, 2500);
+            } else {
+                const err = await res.json();
+                alert('Save failed: ' + JSON.stringify(err));
+            }
+        } catch {
+            alert('Connection error. Please try again.');
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-check" style="font-size:0.7rem; margin-right:4px;"></i> Save';
         }
-
-        // switch back to display mode
-        cancelEdit();
-
-        // show a saved confirmation for a couple seconds
-        var successMsg = document.getElementById('saveSuccess');
-        successMsg.style.display = 'inline';
-        setTimeout(function() {
-            successMsg.style.display = 'none';
-        }, 2500);
-
-        // to be connected to backend team - this is where we would send the data to Django
     }
 
-    // cancels the edit and goes back to display mode
+    // --- CANCEL EDIT ---
     function cancelEdit() {
         isEditing = false;
 
         document.getElementById('editName').style.display = 'none';
         document.getElementById('displayName').style.display = 'block';
-
         document.getElementById('editJobRole').style.display = 'none';
         document.getElementById('displayJobRole').style.display = 'block';
-
         document.getElementById('editDepartment').style.display = 'none';
         document.getElementById('displayDepartment').style.display = 'block';
-
         document.getElementById('editDescription').style.display = 'none';
         document.getElementById('displayDescription').style.display = 'block';
-
         document.getElementById('editAboutMe').style.display = 'none';
         document.getElementById('displayAboutMe').style.display = 'block';
+
+        document.getElementById('editLineManager').style.display = 'none';
+        document.getElementById('displayLineManager').style.display = 'block';
+        document.getElementById('editPhone').style.display = 'none';
+        document.getElementById('displayPhone').style.display = 'block';
+        document.getElementById('editAddress').style.display = 'none';
+        document.getElementById('displayAddress').style.display = 'block';
+        document.getElementById('editDob').style.display = 'none';
+        document.getElementById('displayDob').style.display = 'block';
 
         document.getElementById('editBtn').style.display = 'block';
         document.getElementById('saveBtn').style.display = 'none';
@@ -608,25 +688,22 @@
         document.getElementById('changePicBtn').style.display = 'none';
     }
 
-    // triggers the hidden file input when change picture is clicked
     function changePicture() {
         document.getElementById('pictureUpload').click();
     }
 
-    // handles the profile picture upload and shows a preview
     function handlePictureUpload(e) {
         var file = e.target.files[0];
         if (!file) return;
+        pendingPictureFile = file;
 
         var reader = new FileReader();
         reader.onload = function(event) {
-            var avatarCircle = document.getElementById('avatarCircle');
-            avatarCircle.innerHTML = '<img src="' + event.target.result + '" alt="Profile picture">';
-        }
+            document.getElementById('avatarCircle').innerHTML = '<img src="' + event.target.result + '" alt="Profile picture">';
+        };
         reader.readAsDataURL(file);
     }
 
-    // shows or hides the salary value
     function toggleSalary() {
         var dots = document.getElementById('salaryDots');
         var actual = document.getElementById('salaryActual');
@@ -643,6 +720,7 @@
         }
     }
 
+    initProfile();
 </script>
 
 </body>

@@ -452,32 +452,28 @@
         </button>
     </div>
 
-    <!-- pinned announcement - lime green stripe and glow -->
-    <div class="pinned-card">
+    <!-- pinned announcement - populated dynamically -->
+    <div class="pinned-card" id="pinnedCard" style="display:none;">
         <div class="pinned-label">
             <i class="fas fa-thumbtack" style="margin-right:5px;"></i>Pinned Announcement
         </div>
         <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
-            <div>
-                <h4 style="font-weight:bold; margin-bottom:0.4rem;">Q2 2026 Company Update — All Staff</h4>
-                <p style="color:#9ca3af; font-size:0.875rem; max-width:600px; line-height:1.6;">
-                    A message from leadership on our performance this quarter, upcoming initiatives,
-                    and what to expect as we move into Q3. Please read before the town hall on 28th March.
-                </p>
+            <div style="flex:1;">
+                <h4 id="pinnedTitle" style="font-weight:bold; margin-bottom:0.4rem;"></h4>
+                <p id="pinnedBody" style="color:#9ca3af; font-size:0.875rem; max-width:600px; line-height:1.6;"></p>
                 <div style="margin-top:0.75rem; display:flex; align-items:center; gap:10px;">
-                    <span class="type-label">Update</span>
-                    <span class="date-text">Posted 18 March 2026 by HR Team</span>
+                    <span id="pinnedType" class="type-label"></span>
+                    <span id="pinnedMeta" class="date-text"></span>
                 </div>
             </div>
-            <!-- heart and circle-x reactions - just floating icons, no background -->
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
                 <button class="react-btn" onclick="react(this, 'like', 'pinned')">
                     <i class="heart-icon"></i>
-                    <span class="react-count">24</span>
+                    <span class="react-count">0</span>
                 </button>
                 <button class="react-btn" onclick="react(this, 'dislike', 'pinned')">
                     <i class="fa-regular fa-circle-xmark"></i>
-                    <span class="react-count">2</span>
+                    <span class="react-count">0</span>
                 </button>
             </div>
         </div>
@@ -512,227 +508,8 @@
         <p>No content found.</p>
     </div>
 
-    <!-- 2 column grid on wide screens, 1 column on mobile -->
+    <!-- 2 column grid - populated dynamically from the API -->
     <div class="row" id="cardsGrid">
-
-        <!-- news - soft white left stripe -->
-        <div class="col-12 col-md-6 card-wrapper" data-type="news">
-            <div class="content-card card-news">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
-                    <span class="type-label">News</span>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="date-text">15 Mar 2026</span>
-                        <!-- admin only remove button - backend team: only render when user.is_staff is true -->
-                        <button class="remove-btn" onclick="removeCard(this)" title="Remove post">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </div>
-                <h5 style="font-weight:bold; margin-bottom:0.4rem;">
-                    Spring 2026 Graduate Intake — Meet Your New Colleagues
-                </h5>
-                <p style="color:#9ca3af; font-size:0.85rem; line-height:1.6;">
-                    We're welcoming 42 new graduates across our UK academies this month.
-                    Find out who's joining your team and how to connect with them through the portal.
-                </p>
-                <div class="card-footer-row">
-                    <div class="reaction-group">
-                        <button class="react-btn" onclick="react(this, 'like', 'c1')">
-                            <i class="heart-icon"></i>
-                            <span class="react-count">18</span>
-                        </button>
-                        <button class="react-btn" onclick="react(this, 'dislike', 'c1')">
-                            <i class="fa-regular fa-circle-xmark"></i>
-                            <span class="react-count">0</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- file - amber yellow left stripe -->
-        <div class="col-12 col-md-6 card-wrapper" data-type="file">
-            <div class="content-card card-file">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
-                    <span class="type-label">File</span>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="date-text">10 Mar 2026</span>
-                        <!-- admin only - backend team: only render when user.is_staff is true -->
-                        <button class="remove-btn" onclick="removeCard(this)" title="Remove post">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </div>
-                <h5 style="font-weight:bold; margin-bottom:0.4rem;">
-                    Employee Handbook 2026 — Updated Edition
-                </h5>
-                <p style="color:#9ca3af; font-size:0.85rem; line-height:1.6;">
-                    The latest version of the FDM Employee Handbook including updated policies
-                    on hybrid working, leave entitlements, and the code of conduct.
-                </p>
-                <div class="card-footer-row">
-                    <div class="reaction-group">
-                        <button class="react-btn" onclick="react(this, 'like', 'c2')">
-                            <i class="heart-icon"></i>
-                            <span class="react-count">31</span>
-                        </button>
-                        <button class="react-btn" onclick="react(this, 'dislike', 'c2')">
-                            <i class="fa-regular fa-circle-xmark"></i>
-                            <span class="react-count">1</span>
-                        </button>
-                    </div>
-                    <a href="#" class="download-btn" onclick="handleDownload(event, 'Employee_Handbook_2026.pdf')">
-                        <i class="fas fa-download"></i> Download PDF
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- update - olive green left stripe -->
-        <div class="col-12 col-md-6 card-wrapper" data-type="update">
-            <div class="content-card card-update">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
-                    <span class="type-label">Update</span>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="date-text">8 Mar 2026</span>
-                        <!-- admin only - backend team: only render when user.is_staff is true -->
-                        <button class="remove-btn" onclick="removeCard(this)" title="Remove post">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </div>
-                <h5 style="font-weight:bold; margin-bottom:0.4rem;">
-                    Pension Scheme Update — Action Required by 31st March
-                </h5>
-                <p style="color:#9ca3af; font-size:0.85rem; line-height:1.6;">
-                    Important changes to the company pension scheme take effect next month.
-                    All employees must review and confirm their contribution preferences before the deadline.
-                </p>
-                <div class="card-footer-row">
-                    <div class="reaction-group">
-                        <button class="react-btn" onclick="react(this, 'like', 'c3')">
-                            <i class="heart-icon"></i>
-                            <span class="react-count">7</span>
-                        </button>
-                        <button class="react-btn" onclick="react(this, 'dislike', 'c3')">
-                            <i class="fa-regular fa-circle-xmark"></i>
-                            <span class="react-count">4</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- file - amber yellow left stripe -->
-        <div class="col-12 col-md-6 card-wrapper" data-type="file">
-            <div class="content-card card-file">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
-                    <span class="type-label">File</span>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="date-text">5 Mar 2026</span>
-                        <!-- admin only - backend team: only render when user.is_staff is true -->
-                        <button class="remove-btn" onclick="removeCard(this)" title="Remove post">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </div>
-                <h5 style="font-weight:bold; margin-bottom:0.4rem;">
-                    Q1 Training Schedule 2026 — All Academies
-                </h5>
-                <p style="color:#9ca3af; font-size:0.85rem; line-height:1.6;">
-                    Full training schedule for Q1 across all FDM academies. Includes session dates,
-                    facilitators, and room allocations for Nottingham, London, and Leeds.
-                </p>
-                <div class="card-footer-row">
-                    <div class="reaction-group">
-                        <button class="react-btn" onclick="react(this, 'like', 'c4')">
-                            <i class="heart-icon"></i>
-                            <span class="react-count">14</span>
-                        </button>
-                        <button class="react-btn" onclick="react(this, 'dislike', 'c4')">
-                            <i class="fa-regular fa-circle-xmark"></i>
-                            <span class="react-count">0</span>
-                        </button>
-                    </div>
-                    <a href="#" class="download-btn" onclick="handleDownload(event, 'Q1_Training_Schedule.xlsx')">
-                        <i class="fas fa-download"></i> Download
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- policy - slate grey left stripe -->
-        <div class="col-12 col-md-6 card-wrapper" data-type="policy">
-            <div class="content-card card-policy">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
-                    <span class="type-label">Policy</span>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="date-text">1 Mar 2026</span>
-                        <!-- admin only - backend team: only render when user.is_staff is true -->
-                        <button class="remove-btn" onclick="removeCard(this)" title="Remove post">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </div>
-                <h5 style="font-weight:bold; margin-bottom:0.4rem;">
-                    Hybrid Working Policy — Updated Guidelines for 2026
-                </h5>
-                <p style="color:#9ca3af; font-size:0.85rem; line-height:1.6;">
-                    Revised guidance on hybrid working including minimum in-office requirements,
-                    flexible working requests, and equipment allowances for remote employees.
-                </p>
-                <div class="card-footer-row">
-                    <div class="reaction-group">
-                        <button class="react-btn" onclick="react(this, 'like', 'c5')">
-                            <i class="heart-icon"></i>
-                            <span class="react-count">45</span>
-                        </button>
-                        <button class="react-btn" onclick="react(this, 'dislike', 'c5')">
-                            <i class="fa-regular fa-circle-xmark"></i>
-                            <span class="react-count">6</span>
-                        </button>
-                    </div>
-                    <a href="#" class="download-btn" onclick="handleDownload(event, 'Hybrid_Working_Policy.pdf')">
-                        <i class="fas fa-download"></i> Download
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- news - soft white left stripe -->
-        <div class="col-12 col-md-6 card-wrapper" data-type="news">
-            <div class="content-card card-news">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
-                    <span class="type-label">News</span>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="date-text">27 Feb 2026</span>
-                        <!-- admin only - backend team: only render when user.is_staff is true -->
-                        <button class="remove-btn" onclick="removeCard(this)" title="Remove post">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </div>
-                <h5 style="font-weight:bold; margin-bottom:0.4rem;">
-                    FDM Named Best Tech Employer 2026 — Industry Awards
-                </h5>
-                <p style="color:#9ca3af; font-size:0.85rem; line-height:1.6;">
-                    FDM has been recognised as one of the best technology employers in the UK
-                    for 2026 at the National Technology Awards ceremony in London.
-                </p>
-                <div class="card-footer-row">
-                    <div class="reaction-group">
-                        <button class="react-btn" onclick="react(this, 'like', 'c6')">
-                            <i class="heart-icon"></i>
-                            <span class="react-count">92</span>
-                        </button>
-                        <button class="react-btn" onclick="react(this, 'dislike', 'c6')">
-                            <i class="fa-regular fa-circle-xmark"></i>
-                            <span class="react-count">0</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
     </div>
 

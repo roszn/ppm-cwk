@@ -10,6 +10,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('accounts.urls')),
     path('api/profiles/', include('profiles.urls')),
+    path('api/content/', include('content.urls')),
     path('', login_page, name='login'),
     path('login', login_page, name='login-alt'),
     path('homepage', TemplateView.as_view(template_name='homepage.html'), name='homepage'),

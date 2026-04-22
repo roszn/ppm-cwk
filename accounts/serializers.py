@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import check_password as check_hash
+from django.db.models import F
 from .models import CustomUser
 
 # Used to equalise timing when the email doesn't exist, preventing enumeration.
@@ -23,14 +24,15 @@ class LoginSerializer(serializers.Serializer):
             authenticated_user = authenticate(username=email, password=password)
             
             if authenticated_user is None:
-                user.failed_login_attempts += 1
+                CustomUser.objects.filter(pk=user.pk).update(
+                    failed_login_attempts=F('failed_login_attempts') + 1
+                )
+                user.refresh_from_db()
                 if user.failed_login_attempts >= 3:
-                    user.is_locked = True
-                user.save()
+                    CustomUser.objects.filter(pk=user.pk).update(is_locked=True)
                 raise serializers.ValidationError("Invalid credentials.")
-            
-            user.failed_login_attempts = 0
-            user.save()
+
+            CustomUser.objects.filter(pk=user.pk).update(failed_login_attempts=0)
             data['user'] = authenticated_user
             
         except CustomUser.DoesNotExist:

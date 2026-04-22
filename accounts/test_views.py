@@ -1,4 +1,4 @@
 from django.shortcuts import render
 
-def login_test(request):
+def login_page(request):
     return render(request, 'login_test.html')

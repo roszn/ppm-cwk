@@ -13,11 +13,13 @@ urlpatterns = [
     path('api/content/', include('content.urls')),
     path('api/holiday/', include('holiday.urls')),
     path('api/support/', include('support.urls')),
+    path('api/calendar/', include('shifts.urls')),
     path('', login_page, name='login'),
     path('login', login_page, name='login-alt'),
     path('homepage', TemplateView.as_view(template_name='homepage.html'), name='homepage'),
     path('profile', TemplateView.as_view(template_name='profile.html'), name='profile'),
     path('support', TemplateView.as_view(template_name='support.html'), name='support'),
     path('holiday', TemplateView.as_view(template_name='holiday.html'), name='holiday'),
+    path('calendar', TemplateView.as_view(template_name='calendar.html'), name='calendar'),
     path('logout', LogoutRedirectView.as_view(), name='logout'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

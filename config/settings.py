@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'content',
     'holiday',
     'support',
+    'shifts',
 ]
 
 MIDDLEWARE = [

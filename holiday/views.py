@@ -89,14 +89,19 @@ class HolidayRequestDetailView(APIView):
 
 
 class TeamRequestsView(APIView):
-    """Pending requests where I am the line manager."""
+    """Pending requests where I am the line manager, or all pending requests for staff."""
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        requests = HolidayRequest.objects.filter(
-            employee__profile__line_manager=request.user,
-            status='pending',
-        ).select_related('employee')
+        if request.user.is_staff:
+            requests = HolidayRequest.objects.filter(
+                status='pending',
+            ).select_related('employee')
+        else:
+            requests = HolidayRequest.objects.filter(
+                employee__profile__line_manager=request.user,
+                status='pending',
+            ).select_related('employee')
         serializer = HolidayRequestSerializer(requests, many=True)
         return Response(serializer.data)
 

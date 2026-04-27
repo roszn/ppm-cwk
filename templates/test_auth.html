@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FDM Employee Portal - Auth Test</title>
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        input { width: 100%; padding: 8px; margin: 5px 0; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .success { color: green; }
+        .error { color: red; }
+        #result { margin-top: 10px; padding: 10px; background: #f5f5f5; }
+    </style>
+</head>
+<body>
+    <h1>FDM Employee Portal - Authentication Test</h1>
+    
+    <div class="section">
+        <h2>Login</h2>
+        <input type="email" id="email" placeholder="Email" value="staff@fdm.com">
+        <input type="password" id="password" placeholder="Password" value="Staff123!">
+        <button onclick="login()">Login</button>
+    </div>
+    
+    <div class="section">
+        <h2>Current User</h2>
+        <button onclick="getCurrentUser()">Get Current User</button>
+    </div>
+    
+    <div class="section">
+        <h2>Logout</h2>
+        <button onclick="logout()">Logout</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function showResult(data, isError = false) {
+            const result = document.getElementById('result');
+            result.innerHTML = `<pre class="${isError ? 'error' : 'success'}">${JSON.stringify(data, null, 2)}</pre>`;
+        }
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('/api/auth/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                showResult(data, !response.ok);
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+
+        async function getCurrentUser() {
+            try {
+                const response = await fetch('/api/auth/me/', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+                
+                const data = await response.json();
+                showResult(data, !response.ok);
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+
+        async function logout() {
+            try {
+                const response = await fetch('/api/auth/logout/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+                
+                const data = await response.json();
+                showResult(data, !response.ok);
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+    </script>
+</body>
+</html>

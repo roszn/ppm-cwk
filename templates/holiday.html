@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FDM Employee Portal - Book Leave</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #1e1e1e; color: #f0f0f0; font-family: Arial, sans-serif; }
+
+        .navbar { background-color: #111111; border-bottom: 1px solid #2e2e2e; }
+        .navbar-brand { color: #c8fd14 !important; font-weight: bold; font-size: 1.4rem; }
+        .nav-link { color: #9ca3af !important; }
+        .nav-link:hover { color: #f0f0f0 !important; }
+        .nav-link.active { color: #c8fd14 !important; }
+
+        .page-heading { padding: 2rem 0 1.25rem 0; }
+        .page-heading h1 { font-size: 2rem; font-weight: bold; }
+        .green-text { color: #c8fd14; }
+        .heading-divider {
+            height: 2px; background: linear-gradient(to right, #c8fd14, transparent);
+            border: none; margin: 1rem 0 1.5rem 0; opacity: 0.4;
+        }
+
+        /* allowance bar */
+        .allowance-card {
+            background-color: #242424; border: 1px solid #2e2e2e;
+            border-radius: 10px; padding: 1.25rem; margin-bottom: 1.25rem;
+        }
+        .allowance-label { font-size: 0.72rem; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+        .allowance-bar-bg { background-color: #2e2e2e; border-radius: 20px; height: 10px; margin: 0.5rem 0; }
+        .allowance-bar-fill { background-color: #c8fd14; height: 10px; border-radius: 20px; transition: width 0.4s; }
+        .allowance-bar-fill.warning { background-color: #fcd34d; }
+        .allowance-bar-fill.danger { background-color: #f87171; }
+        .allowance-stat { font-size: 0.8rem; color: #9ca3af; }
+        .allowance-stat strong { color: #f0f0f0; }
+
+        /* request cards */
+        .request-card {
+            background-color: #242424; border: 1px solid #2e2e2e;
+            border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 0.75rem;
+            display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+        }
+        .request-card:hover { border-color: #3a3a3a; }
+        .status-badge {
+            font-size: 0.7rem; font-weight: bold; padding: 3px 10px;
+            border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .badge-pending  { background: rgba(252,211,77,0.15); color: #fcd34d; border: 1px solid rgba(252,211,77,0.3); }
+        .badge-approved { background: rgba(200,253,20,0.12); color: #c8fd14; border: 1px solid rgba(200,253,20,0.3); }
+        .badge-rejected { background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
+
+        .req-type { font-size: 0.7rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; }
+        .req-dates { font-size: 0.875rem; font-weight: bold; }
+        .req-days  { font-size: 0.8rem; color: #9ca3af; }
+        .cancel-btn {
+            background: none; border: 1px solid #3a3a3a; border-radius: 6px;
+            color: #666; font-size: 0.75rem; padding: 3px 10px; cursor: pointer; margin-left: auto;
+        }
+        .cancel-btn:hover { border-color: #f87171; color: #f87171; }
+
+        /* book leave button */
+        .book-btn {
+            background-color: #c8fd14; border: none; border-radius: 8px;
+            padding: 8px 20px; color: #1e1e1e; font-weight: bold;
+            font-size: 0.875rem; cursor: pointer;
+        }
+        .book-btn:hover { opacity: 0.88; }
+
+        /* section titles */
+        .section-title {
+            font-size: 0.7rem; font-weight: bold; color: #9ca3af;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem;
+        }
+
+        /* team approval cards */
+        .approval-card {
+            background-color: #242424; border: 1px solid #2e2e2e;
+            border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 0.75rem;
+        }
+        .approve-btn {
+            background: rgba(200,253,20,0.12); border: 1px solid rgba(200,253,20,0.3);
+            color: #c8fd14; border-radius: 6px; font-size: 0.75rem;
+            padding: 4px 12px; cursor: pointer; margin-right: 6px;
+        }
+        .approve-btn:hover { background: rgba(200,253,20,0.2); }
+        .reject-btn {
+            background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.25);
+            color: #f87171; border-radius: 6px; font-size: 0.75rem;
+            padding: 4px 12px; cursor: pointer;
+        }
+        .reject-btn:hover { background: rgba(248,113,113,0.2); }
+
+        /* modal */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.7); z-index: 1000;
+            align-items: center; justify-content: center;
+        }
+        .modal-box {
+            background: #242424; border: 1px solid #2e2e2e; border-radius: 12px;
+            padding: 1.75rem; width: 100%; max-width: 480px; margin: 1rem;
+        }
+        .modal-input {
+            background: #1e1e1e; border: 1px solid #3a3a3a; border-radius: 6px;
+            color: #f0f0f0; padding: 8px 12px; font-size: 0.875rem;
+            width: 100%; margin-bottom: 10px; font-family: Arial, sans-serif;
+        }
+        .modal-input:focus { outline: none; border-color: #c8fd14; }
+        .modal-label { font-size: 0.75rem; color: #9ca3af; margin-bottom: 4px; display: block; }
+        .submit-btn {
+            background: #c8fd14; border: none; border-radius: 8px;
+            padding: 10px; width: 100%; color: #1e1e1e;
+            font-weight: bold; font-size: 0.875rem; cursor: pointer; margin-top: 4px;
+        }
+        .submit-btn:hover { opacity: 0.88; }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .modal-error { color: #f87171; font-size: 0.8rem; margin-bottom: 8px; display: none; }
+
+        .empty-state { color: #555; font-size: 0.875rem; padding: 1.5rem 0; text-align: center; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="#">FDM Portal</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" style="border-color:#3a3a3a;">
+            <span class="navbar-toggler-icon" style="filter:invert(1);"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="/homepage">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/profile">My Profile</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#">Book Leave</a></li>
+                <li class="nav-item"><a class="nav-link" href="/support">Support</a></li>
+            </ul>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div id="navAvatar" style="width:32px; height:32px; background:#c8fd14; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#1e1e1e; font-weight:bold; font-size:0.8rem;">U</div>
+                <span id="navWelcomeName" style="font-size:0.875rem; color:#9ca3af;">Welcome, User</span>
+                <a href="/logout" style="font-size:0.8rem; color:#555; text-decoration:none; margin-left:8px;">Log out</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="page-heading">
+        <h1>Book <span class="green-text">Leave</span></h1>
+        <p style="color:#9ca3af; margin-top:0.4rem;">Request holiday and log absences</p>
+        <hr class="heading-divider">
+    </div>
+
+    <!-- allowance summary -->
+    <div class="allowance-card">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-8">
+                <div class="allowance-label">Annual Leave Allowance <span id="allowanceYear" style="color:#555;"></span></div>
+                <div class="allowance-bar-bg">
+                    <div class="allowance-bar-fill" id="allowanceBar" style="width:0%;"></div>
+                </div>
+                <div class="allowance-stat">
+                    <strong id="daysApproved">0</strong> approved &nbsp;·&nbsp;
+                    <strong id="daysPending">0</strong> pending &nbsp;·&nbsp;
+                    <strong id="daysRemaining">21</strong> remaining of <strong id="daysTotal">21</strong>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0">
+                <button class="book-btn" onclick="openModal()">
+                    <i class="fas fa-plus" style="margin-right:6px;"></i>Book Leave / Log Absence
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- my requests -->
+    <div class="section-title">My Requests</div>
+    <div id="myRequests">
+        <div class="empty-state">No requests yet.</div>
+    </div>
+
+    <!-- team approvals (line managers only) -->
+    <div id="teamSection" style="display:none; margin-top:1.5rem;">
+        <div class="section-title" style="display:flex; align-items:center; gap:8px;">
+            <i class="fas fa-users" style="color:#c8fd14;"></i> Team Approval Requests
+            <span id="teamBadge" style="background:rgba(252,211,77,0.15); color:#fcd34d; border:1px solid rgba(252,211,77,0.3); border-radius:20px; font-size:0.65rem; padding:2px 8px;"></span>
+        </div>
+        <div id="teamRequests">
+            <div class="empty-state">No pending requests from your team.</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- book leave modal -->
+<div class="modal-overlay" id="bookModal">
+    <div class="modal-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+            <h5 style="margin:0; font-weight:bold;">Book Leave / Log Absence</h5>
+            <button onclick="closeModal()" style="background:none; border:none; color:#666; cursor:pointer; font-size:1.1rem;"><i class="fas fa-times"></i></button>
+        </div>
+
+        <label class="modal-label">Type</label>
+        <select class="modal-input" id="reqType" onchange="toggleAbsenceReason()">
+            <option value="holiday">Holiday</option>
+            <option value="absence">Absence</option>
+        </select>
+
+        <div id="absenceReasonRow" style="display:none;">
+            <label class="modal-label">Reason</label>
+            <select class="modal-input" id="absenceReason">
+                <option value="illness">Illness</option>
+                <option value="dentist">Dentist Appointment</option>
+                <option value="medical">Medical Appointment</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <label class="modal-label">Start Date</label>
+                <input class="modal-input" type="date" id="startDate">
+            </div>
+            <div class="col-6">
+                <label class="modal-label">End Date</label>
+                <input class="modal-input" type="date" id="endDate">
+            </div>
+        </div>
+
+        <div id="daysPreview" style="font-size:0.8rem; color:#9ca3af; margin-bottom:10px; display:none;">
+            <i class="fas fa-calendar-check" style="color:#c8fd14; margin-right:4px;"></i>
+            <span id="daysPreviewText"></span>
+        </div>
+
+        <label class="modal-label">Notes (optional)</label>
+        <textarea class="modal-input" id="reqNotes" rows="2" placeholder="Any additional information..."></textarea>
+
+        <div class="modal-error" id="modalError"></div>
+        <button class="submit-btn" id="submitBtn" onclick="submitRequest()">Submit Request</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    var currentUser = null;
+
+    function getCookie(name) {
+        let val = null;
+        document.cookie.split(';').forEach(c => {
+            const t = c.trim();
+            if (t.startsWith(name + '=')) val = decodeURIComponent(t.slice(name.length + 1));
+        });
+        return val;
+    }
+
+    function formatDate(dateStr) {
+        return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+    }
+
+    function calcWorkingDays(start, end) {
+        let count = 0;
+        const s = new Date(start + 'T00:00:00');
+        const e = new Date(end + 'T00:00:00');
+        const cur = new Date(s);
+        while (cur <= e) {
+            if (cur.getDay() !== 0 && cur.getDay() !== 6) count++;
+            cur.setDate(cur.getDate() + 1);
+        }
+        return count;
+    }
+
+    // --- ALLOWANCE ---
+    async function loadAllowance() {
+        const res = await fetch('/api/holiday/allowance/', { credentials: 'include' });
+        if (!res.ok) return;
+        const data = await res.json();
+
+        const year = new Date().getFullYear();
+        document.getElementById('allowanceYear').textContent = year;
+        document.getElementById('daysApproved').textContent = data.days_approved;
+        document.getElementById('daysPending').textContent = data.days_pending;
+        document.getElementById('daysRemaining').textContent = data.days_remaining;
+        document.getElementById('daysTotal').textContent = data.total_days;
+
+        const pct = ((data.days_approved + data.days_pending) / data.total_days * 100).toFixed(0);
+        const bar = document.getElementById('allowanceBar');
+        bar.style.width = Math.min(pct, 100) + '%';
+        bar.classList.remove('warning', 'danger');
+        if (pct >= 90) bar.classList.add('danger');
+        else if (pct >= 70) bar.classList.add('warning');
+    }
+
+    // --- MY REQUESTS ---
+    async function loadMyRequests() {
+        const res = await fetch('/api/holiday/', { credentials: 'include' });
+        if (!res.ok) return;
+        const requests = await res.json();
+        const container = document.getElementById('myRequests');
+
+        if (!requests.length) {
+            container.innerHTML = '<div class="empty-state">No requests yet.</div>';
+            return;
+        }
+
+        container.innerHTML = requests.map(r => {
+            const badgeClass = { pending:'badge-pending', approved:'badge-approved', rejected:'badge-rejected' }[r.status];
+            const typeLabel = r.request_type === 'absence' && r.absence_reason
+                ? 'Absence — ' + r.absence_reason.charAt(0).toUpperCase() + r.absence_reason.slice(1)
+                : r.request_type.charAt(0).toUpperCase() + r.request_type.slice(1);
+            const cancelBtn = r.status === 'pending'
+                ? `<button class="cancel-btn" onclick="cancelRequest(${r.id})"><i class="fas fa-times" style="margin-right:4px;"></i>Cancel</button>`
+                : '';
+            const reviewInfo = r.status !== 'pending' && r.reviewed_by_name
+                ? `<span style="font-size:0.75rem; color:#555; margin-left:auto;">${r.status === 'approved' ? 'Approved' : 'Rejected'} by ${r.reviewed_by_name}</span>`
+                : '';
+
+            return `
+                <div class="request-card" id="req-${r.id}">
+                    <span class="status-badge ${badgeClass}">${r.status}</span>
+                    <div>
+                        <div class="req-type">${typeLabel}</div>
+                        <div class="req-dates">${formatDate(r.start_date)} — ${formatDate(r.end_date)}</div>
+                        <div class="req-days">${r.working_days} working day${r.working_days !== 1 ? 's' : ''}${r.notes ? ' · ' + r.notes : ''}</div>
+                    </div>
+                    ${reviewInfo}
+                    ${cancelBtn}
+                </div>`;
+        }).join('');
+    }
+
+    // --- TEAM REQUESTS (line managers) ---
+    async function loadTeamRequests() {
+        const res = await fetch('/api/holiday/team/', { credentials: 'include' });
+        if (!res.ok) return;
+        const requests = await res.json();
+
+        if (requests.length > 0) {
+            document.getElementById('teamSection').style.display = 'block';
+            document.getElementById('teamBadge').textContent = requests.length + ' pending';
+        }
+
+        const container = document.getElementById('teamRequests');
+        if (!requests.length) {
+            container.innerHTML = '<div class="empty-state">No pending requests from your team.</div>';
+            return;
+        }
+
+        container.innerHTML = requests.map(r => {
+            const typeLabel = r.request_type === 'absence' && r.absence_reason
+                ? 'Absence — ' + r.absence_reason.charAt(0).toUpperCase() + r.absence_reason.slice(1)
+                : r.request_type.charAt(0).toUpperCase() + r.request_type.slice(1);
+            return `
+                <div class="approval-card" id="team-req-${r.id}">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
+                        <div>
+                            <div style="font-weight:bold; font-size:0.875rem;">${r.employee_name}</div>
+                            <div class="req-type">${typeLabel}</div>
+                            <div class="req-dates" style="font-size:0.875rem;">${formatDate(r.start_date)} — ${formatDate(r.end_date)}</div>
+                            <div class="req-days">${r.working_days} working day${r.working_days !== 1 ? 's' : ''}${r.notes ? ' · ' + r.notes : ''}</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                            <button class="approve-btn" onclick="reviewRequest(${r.id}, 'approved')"><i class="fas fa-check" style="margin-right:4px;"></i>Approve</button>
+                            <button class="reject-btn" onclick="reviewRequest(${r.id}, 'rejected')"><i class="fas fa-times" style="margin-right:4px;"></i>Reject</button>
+                        </div>
+                    </div>
+                </div>`;
+        }).join('');
+    }
+
+    // --- CANCEL REQUEST ---
+    async function cancelRequest(id) {
+        if (!confirm('Cancel this request?')) return;
+        const res = await fetch('/api/holiday/' + id + '/', {
+            method: 'DELETE',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            credentials: 'include',
+        });
+        if (res.ok) {
+            document.getElementById('req-' + id)?.remove();
+            await loadAllowance();
+        }
+    }
+
+    // --- APPROVE / REJECT ---
+    async function reviewRequest(id, status) {
+        const res = await fetch('/api/holiday/' + id + '/', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+            credentials: 'include',
+            body: JSON.stringify({ status }),
+        });
+        if (res.ok) {
+            document.getElementById('team-req-' + id)?.remove();
+            const remaining = document.querySelectorAll('[id^="team-req-"]').length;
+            if (remaining === 0) {
+                document.getElementById('teamRequests').innerHTML = '<div class="empty-state">No pending requests from your team.</div>';
+                document.getElementById('teamBadge').textContent = '0 pending';
+            } else {
+                document.getElementById('teamBadge').textContent = remaining + ' pending';
+            }
+        }
+    }
+
+    // --- MODAL ---
+    function openModal() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').value = today;
+        document.getElementById('endDate').value = today;
+        updateDaysPreview();
+        document.getElementById('bookModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('bookModal').style.display = 'none';
+        document.getElementById('modalError').style.display = 'none';
+        document.getElementById('reqNotes').value = '';
+    }
+
+    function toggleAbsenceReason() {
+        const isAbsence = document.getElementById('reqType').value === 'absence';
+        document.getElementById('absenceReasonRow').style.display = isAbsence ? 'block' : 'none';
+    }
+
+    function updateDaysPreview() {
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        if (!start || !end || end < start) {
+            document.getElementById('daysPreview').style.display = 'none';
+            return;
+        }
+        const days = calcWorkingDays(start, end);
+        document.getElementById('daysPreviewText').textContent = days + ' working day' + (days !== 1 ? 's' : '');
+        document.getElementById('daysPreview').style.display = 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('startDate').addEventListener('change', updateDaysPreview);
+        document.getElementById('endDate').addEventListener('change', updateDaysPreview);
+    });
+
+    document.getElementById('bookModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    async function submitRequest() {
+        const type = document.getElementById('reqType').value;
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        const notes = document.getElementById('reqNotes').value;
+        const errorDiv = document.getElementById('modalError');
+        const submitBtn = document.getElementById('submitBtn');
+
+        if (!start || !end) {
+            errorDiv.textContent = 'Please select start and end dates.';
+            errorDiv.style.display = 'block';
+            return;
+        }
+
+        const body = { request_type: type, start_date: start, end_date: end, notes };
+        if (type === 'absence') body.absence_reason = document.getElementById('absenceReason').value;
+
+        submitBtn.textContent = 'Submitting…';
+        submitBtn.disabled = true;
+        errorDiv.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/holiday/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                credentials: 'include',
+                body: JSON.stringify(body),
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                closeModal();
+                await loadMyRequests();
+                await loadAllowance();
+            } else {
+                errorDiv.textContent = data.error || JSON.stringify(data);
+                errorDiv.style.display = 'block';
+            }
+        } catch {
+            errorDiv.textContent = 'Connection error. Please try again.';
+            errorDiv.style.display = 'block';
+        } finally {
+            submitBtn.textContent = 'Submit Request';
+            submitBtn.disabled = false;
+        }
+    }
+
+    // --- INIT ---
+    async function init() {
+        try {
+            const res = await fetch('/api/auth/me/', { credentials: 'include' });
+            if (!res.ok) { window.location.href = '/'; return; }
+            currentUser = await res.json();
+
+            const initials = ((currentUser.first_name[0] || '') + (currentUser.last_name[0] || '')).toUpperCase() || currentUser.email[0].toUpperCase();
+            document.getElementById('navAvatar').textContent = initials;
+            document.getElementById('navWelcomeName').textContent = 'Welcome, ' + (currentUser.first_name || currentUser.email);
+
+            await Promise.all([loadAllowance(), loadMyRequests(), loadTeamRequests()]);
+        } catch {
+            window.location.href = '/';
+        }
+    }
+
+    init();
+</script>
+</body>
+</html>
